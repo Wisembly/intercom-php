@@ -1,0 +1,29 @@
+{
+    "name": "wisembly/intercom-php",
+    "description": "",
+    "keywords": ["intercom"],
+    "homepage": "https://github.com/wisembly/intercom-php",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Remy Gazelot",
+            "email": "r.gazelot@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "guzzlehttp/guzzle": "~3.8.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.0.*"
+    },
+    "config": {
+        "bin-dir": "bin"
+    },
+    "autoload": {
+        "psr-0": {
+            "Intercom": ["lib/", "test/"]
+        }
+    }
+}

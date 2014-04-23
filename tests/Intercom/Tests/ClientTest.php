@@ -37,10 +37,10 @@ class ClientTest extends PHPUnit_Framework_TestCase
                         ->getMock();
         $object->expects(self::once())
             ->method('getHttpMethod')
-            ->will(self::returnValue(Client::HTTP_METHOD_POST));
+            ->will(self::returnValue('POST'));
         $object->expects(self::once())
             ->method('getUrl')
-            ->will(self::returnValue(Client::INTERCOM_BASE_URL . '/events'));
+            ->will(self::returnValue('/events'));
         $object->expects(self::once())
             ->method('getParameters')
             ->will(self::returnValue($parameters));
@@ -51,8 +51,8 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $client->expects(self::once())
             ->method('createRequest')
             ->with(
-                Client::HTTP_METHOD_POST,
-                Client::INTERCOM_BASE_URL . '/events',
+                'POST',
+                '/events',
                 [
                     'headers' => ['Content-Type' => 'application\json'],
                     'body' => $parameters,
@@ -88,10 +88,10 @@ class ClientTest extends PHPUnit_Framework_TestCase
                         ->getMock();
         $object->expects(self::once())
             ->method('getHttpMethod')
-            ->will(self::returnValue(Client::HTTP_METHOD_POST));
+            ->will(self::returnValue('POST'));
         $object->expects(self::once())
             ->method('getUrl')
-            ->will(self::returnValue(Client::INTERCOM_BASE_URL . '/events'));
+            ->will(self::returnValue('/events'));
         $object->expects(self::once())
             ->method('getParameters')
             ->will(self::returnValue($parameters));
@@ -102,8 +102,8 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $client->expects(self::once())
             ->method('createRequest')
             ->with(
-                Client::HTTP_METHOD_POST,
-                Client::INTERCOM_BASE_URL . '/events',
+                'POST',
+                '/events',
                 [
                     'headers' => ['Content-Type' => 'application\json'],
                     'body' => $parameters,

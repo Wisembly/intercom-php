@@ -16,7 +16,6 @@ use Intercom\IntercomObjectInterface,
  */
 class Event implements IntercomObjectInterface
 {
-    private $url;
     private $name;
     private $userId;
     private $created;
@@ -30,9 +29,6 @@ class Event implements IntercomObjectInterface
      */
     public function __construct($name, $userId, Datetime $created = null)
     {
-        $this->url        = Client::INTERCOM_BASE_URL . '/events';
-        $this->httpMethod = Client::HTTP_METHOD_POST;
-        
         $this->name       = $name;
         $this->userId     = $userId;
         $this->created    = null !== $created ? $created->getTimestamp() : time();
@@ -55,7 +51,7 @@ class Event implements IntercomObjectInterface
      */
     public function getHttpMethod()
     {
-        return $this->httpMethod;
+        return 'POST';
     }
 
     /**
@@ -63,7 +59,7 @@ class Event implements IntercomObjectInterface
      */
     public function getUrl()
     {
-        return $this->url;
+        return '/events';
     }
 
     /**

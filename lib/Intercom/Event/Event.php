@@ -1,8 +1,11 @@
 <?php
 
-namespace Intercom;
+namespace Intercom\Event;
 
 use \Datetime;
+
+use Intercom\IntercomObjectInterface,
+    Intercom\Client;
 
 /**
  * This class represents an event used by Intercom to add/increment
@@ -13,6 +16,7 @@ use \Datetime;
  */
 class Event implements IntercomObjectInterface
 {
+    private $url;
     private $name;
     private $userId;
     private $created;
@@ -26,9 +30,40 @@ class Event implements IntercomObjectInterface
      */
     public function __construct($name, $userId, Datetime $created = null)
     {
-        $this->name = $name;
-        $this->userId = $userId;
-        $this->created = null !== $created ? $created->getTimestamp() : time();
+        $this->url        = Client::INTERCOM_BASE_URL . '/events';
+        $this->httpMethod = Client::HTTP_METHOD_POST;
+        
+        $this->name       = $name;
+        $this->userId     = $userId;
+        $this->created    = null !== $created ? $created->getTimestamp() : time();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getParameters()
+    {
+        return [
+            'event_name' => $this->getName(),
+            'user_id'    => $this->getUserId(),
+            'created'    => $this->getCreated(),
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getHttpMethod()
+    {
+        return $this->httpMethod;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getUrl()
+    {
+        return $this->url;
     }
 
     /**

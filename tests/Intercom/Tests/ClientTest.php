@@ -2,14 +2,15 @@
 
 namespace Intercom\Tests;
 
-use \Datetime;
+use \Datetime,
+    \PHPUnit_Framework_TestCase;
 
-use Guzzle\Http\Exception\ClientErrorResponseException;
+use GuzzleHttp\Exception\ClientException;
 
 use Intercom\Client,
-    Intercom\Event;
+    Intercom\Event\Event;
 
-class ClientTest extends \PHPUnit_Framework_TestCase
+class ClientTest extends PHPUnit_Framework_TestCase
 {
     private $appId;
     private $apiKey;
@@ -20,81 +21,101 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $this->apiKey = 'myApiKey';
     }
 
-    public function testSendEvent()
+    public function testSend()
     {
-        $event  = new Event('has_been_invited_wiz', 2);
+        $response = $this->getMock('GuzzleHttp\Message\ResponseInterface');
+        $request = $this->getMock('GuzzleHttp\Message\RequestInterface');
 
-        $response = $this->getMock('Guzzle\Http\Message\MessageInterface');
+        $parameters = [
+            'event_name' => 'has_been_invited',
+            'user_id'    => '2',
+            'created'    => '1398246721',
+        ];
 
-        $request = $this->getMock('Guzzle\Http\Message\RequestInterface');
-        $request->expects(self::once())
-            ->method('send')
-            ->will(self::returnValue($response));
+        $object  = $this->getMockBuilder('Intercom\IntercomObjectInterface')
+                        ->disableOriginalConstructor()
+                        ->getMock();
+        $object->expects(self::once())
+            ->method('getHttpMethod')
+            ->will(self::returnValue(Client::HTTP_METHOD_POST));
+        $object->expects(self::once())
+            ->method('getUrl')
+            ->will(self::returnValue(Client::INTERCOM_BASE_URL . '/events'));
+        $object->expects(self::once())
+            ->method('getParameters')
+            ->will(self::returnValue($parameters));
 
-        $client = $this->getMockBuilder('Guzzle\Http\Client')
+        $client = $this->getMockBuilder('GuzzleHttp\ClientInterface')
                         ->disableOriginalConstructor()
                         ->getMock();
         $client->expects(self::once())
-            ->method('setBaseUrl')
-            ->with(Client::API_ENDPOINT_EVENTS);
-        $client->expects(self::once())
-            ->method('post')
+            ->method('createRequest')
             ->with(
-                null,
+                Client::HTTP_METHOD_POST,
+                Client::INTERCOM_BASE_URL . '/events',
                 [
                     'headers' => ['Content-Type' => 'application\json'],
-                ],
-                [
-                    'event_name' => $event->getName(),
-                    'user_id' => $event->getUserId(),
-                    'created' => $event->getCreated()
-                ],
-                [
+                    'body' => $parameters,
                     'auth' => [$this->appId, $this->apiKey]
                 ]
             )
             ->will(self::returnValue($request));
+        $client->expects(self::once())
+            ->method('send')
+            ->with($request)
+            ->will(self::returnValue($response));
 
-        (new Client($this->appId, $this->apiKey, $client))->sendEvent($event);
+        (new Client($this->appId, $this->apiKey, $client))->send($object);
     }
 
     /**
      * @expectedException Intercom\Exception\HttpClientException
      * @expectedMessageException Http client call failed.
      */
-    public function testSendEventWithException()
+    public function testSendWithException()
     {
-        $event  = new Event('has_been_invited_wiz', 2);
+        $request = $this->getMock('GuzzleHttp\Message\RequestInterface');
+        $exception = $this->getMock('GuzzleHttp\Exception\TransferException');
 
-        $request = $this->getMock('Guzzle\Http\Message\RequestInterface');
-        $request->expects(self::once())
-            ->method('send')
-            ->will(self::throwException(new ClientErrorResponseException));
+        $parameters = [
+            'event_name' => 'has_been_invited',
+            'user_id'    => '2',
+            'created'    => '1398246721',
+        ];
+            
+        $object  = $this->getMockBuilder('Intercom\IntercomObjectInterface')
+                        ->disableOriginalConstructor()
+                        ->getMock();
+        $object->expects(self::once())
+            ->method('getHttpMethod')
+            ->will(self::returnValue(Client::HTTP_METHOD_POST));
+        $object->expects(self::once())
+            ->method('getUrl')
+            ->will(self::returnValue(Client::INTERCOM_BASE_URL . '/events'));
+        $object->expects(self::once())
+            ->method('getParameters')
+            ->will(self::returnValue($parameters));
 
-        $client = $this->getMockBuilder('Guzzle\Http\Client')
+        $client = $this->getMockBuilder('GuzzleHttp\ClientInterface')
                         ->disableOriginalConstructor()
                         ->getMock();
         $client->expects(self::once())
-            ->method('setBaseUrl')
-            ->with(Client::API_ENDPOINT_EVENTS);
-        $client->expects(self::once())
-            ->method('post')
+            ->method('createRequest')
             ->with(
-                null,
+                Client::HTTP_METHOD_POST,
+                Client::INTERCOM_BASE_URL . '/events',
                 [
                     'headers' => ['Content-Type' => 'application\json'],
-                ],
-                [
-                    'event_name' => $event->getName(),
-                    'user_id' => $event->getUserId(),
-                    'created' => $event->getCreated()
-                ],
-                [
-                    'auth' => [$this->appId, $this->apiKey]
+                    'body' => $parameters,
+                    'auth' => [$this->appId, $this->apiKey],
                 ]
             )
             ->will(self::returnValue($request));
+        $client->expects(self::once())
+            ->method('send')
+            ->with($request)
+            ->will(self::throwException($exception));
 
-        (new Client($this->appId, $this->apiKey, $client))->sendEvent($event);
+        (new Client($this->appId, $this->apiKey, $client))->send($object);
     }
 }

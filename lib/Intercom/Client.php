@@ -2,15 +2,25 @@
 
 namespace Intercom;
 
-use Guzzle\Http\Client as Guzzle,
-    Guzzle\Common\Exception\GuzzleException;
+use GuzzleHttp\ClientInterface as Guzzle,
+    GuzzleHttp\Exception\TransferException;
 
 use Intercom\Exception\HttpClientException;
 
+/**
+ * Client for Intercom which use HTTPS API
+ *
+ * @see http://doc.intercom.io/api/v1/
+ * @see http://doc.intercom.io/api/v3/ 
+ */
 class Client
 {
-    const API_ENDPOINT_V1 = 'https://api.intercom.io/v1/';
-    const API_ENDPOINT_EVENTS = 'https://api.intercom.io/events';
+    const INTERCOM_BASE_URL = 'https://api.intercom.io';
+    
+    const HTTP_METHOD_GET     = 'GET';
+    const HTTP_METHOD_PUT     = 'PUT';
+    const HTTP_METHOD_PATCH   = 'PATCH';
+    const HTTP_METHOD_POST    = 'POST';
 
     private $appId;
     private $apiKey;
@@ -31,47 +41,28 @@ class Client
     }
 
     /**
-     * Send an Event
-     * 
-     * @param  Event  $event Intercom Event
-     */
-    public function sendEvent(Event $event)
-    {
-        $this->httpCall($event);
-    }
-
-    /**
      * Use the curl client to make an http call
      * 
      * @param  IntercomObjectInterface $object An object related with intercom API
+     *
+     * @throws HttpClientException
      */
-    private function httpCall(IntercomObjectInterface $object)
+    public function send(IntercomObjectInterface $object)
     {
-        if ($object instanceof Event) {
-            $this->client->setBaseUrl(self::API_ENDPOINT_EVENTS);
-        }
-
-        if ('' === $this->client->getBaseUrl()) {
-            $this->client->setBaseUrl(self::API_ENDPOINT_V1);
-        }
-
         try {
-            $this->client->post(
-                null,
+            $request = $this->client->createRequest(
+                $object->getHttpMethod(),
+                $object->getUrl(),
                 [
                     'headers' => ['Content-Type' => 'application\json'],
-                ],
-                [
-                    'event_name' => $object->getName(),
-                    'user_id' => $object->getUserId(),
-                    'created' => $object->getCreated()
-                ],
-                [
-                    'auth' => [$this->appId, $this->apiKey]
+                    'body'    => $object->getParameters(),
+                    'auth'    => [$this->appId, $this->apiKey]
                 ]
-            )->send();   
-        } catch (GuzzleException $e) {
-            throw new HttpClientException;
+            );
+
+            $this->client->send($request);   
+        } catch (TransferException $e) {
+            throw new HttpClientException(null, 0, $e);
         }
     }
 }

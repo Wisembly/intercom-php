@@ -23,7 +23,8 @@
     },
     "autoload": {
         "psr-0": {
-            "Intercom": ["lib/", "test/"]
+            "Intercom": "lib/",
+            "Intercom\\Tests": "tests/"
         }
     }
 }

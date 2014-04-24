@@ -52,7 +52,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
             ->method('createRequest')
             ->with(
                 'POST',
-                '/events',
+                Client::INTERCOM_BASE_URL . '/events',
                 [
                     'headers' => ['Content-Type' => 'application\json'],
                     'body' => $parameters,
@@ -103,7 +103,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
             ->method('createRequest')
             ->with(
                 'POST',
-                '/events',
+                Client::INTERCOM_BASE_URL . '/events',
                 [
                     'headers' => ['Content-Type' => 'application\json'],
                     'body' => $parameters,

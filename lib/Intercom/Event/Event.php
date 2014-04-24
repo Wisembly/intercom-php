@@ -31,7 +31,7 @@ class Event implements IntercomObjectInterface
     {
         $this->name       = $name;
         $this->userId     = $userId;
-        $this->created    = null !== $created ? $created->getTimestamp() : time();
+        $this->created    = null !== $created ? $created : new Datetime;
     }
 
     /**
@@ -40,9 +40,9 @@ class Event implements IntercomObjectInterface
     public function getParameters()
     {
         return [
-            'event_name' => $this->getName(),
-            'user_id'    => $this->getUserId(),
-            'created'    => $this->getCreated(),
+            'event_name' => (string) $this->getName(),
+            'user_id'    => (string) $this->getUserId(),
+            'created'    => (string) $this->getCreated()->getTimestamp(),
         ];
     }
 
@@ -69,7 +69,7 @@ class Event implements IntercomObjectInterface
      */
     public function getName()
     {
-        return (string) $this->name;
+        return $this->name;
     }
 
     /**
@@ -79,16 +79,16 @@ class Event implements IntercomObjectInterface
      */
     public function getUserId()
     {
-        return (string) $this->userId;
+        return $this->userId;
     }
 
     /**
      * Get created
      * 
-     * @return string
+     * @return Datetime
      */
     public function getCreated()
     {
-        return (string) $this->created;
+        return $this->created;
     }
 }

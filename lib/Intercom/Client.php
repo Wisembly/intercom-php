@@ -47,7 +47,7 @@ class Client
         try {
             $request = $this->client->createRequest(
                 $object->getHttpMethod(),
-                $object->getUrl(),
+                self::INTERCOM_BASE_URL . $object->getUrl(),
                 [
                     'headers' => ['Content-Type' => 'application\json'],
                     'body'    => $object->getParameters(),

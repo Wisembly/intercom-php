@@ -9,8 +9,12 @@ use \Exception;
  */
 abstract class AbstractIntercomException extends Exception implements IntercomExceptionInterface
 {
-    public function __construct($message = null)
+    public function __construct($message = null, $code = null, Exception $previous = null)
     {
-        parent::__construct(null !== $message ? $message : 'An error occured with Intercom.');
+        parent::__construct(
+            null !== $message ? $message : 'An error occured with Intercom.',
+            null !== $code ? $code : null,
+            null !== $previous ? $previous : null
+        );
     }
 }

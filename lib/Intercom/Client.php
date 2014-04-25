@@ -39,6 +39,8 @@ class Client
      * 
      * @param  IntercomObjectInterface $object An object related with intercom API
      *
+     * @return GuzzleHttp\Message\Response
+     * 
      * @throws HttpClientException
      */
     public function send(IntercomObjectInterface $object)
@@ -54,7 +56,7 @@ class Client
                 ]
             );
 
-            $this->client->send($request);   
+            return $this->client->send($request);   
         } catch (TransferException $e) {
             throw new HttpClientException($e->getResponse()->getReasonPhrase(), $e->getResponse()->getStatusCode(), $e);
         }

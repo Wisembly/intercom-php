@@ -56,7 +56,7 @@ class Client
 
             $this->client->send($request);   
         } catch (TransferException $e) {
-            throw new HttpClientException(null, 0, $e);
+            throw new HttpClientException($e->getResponse()->getReasonPhrase(), $e->getResponse()->getStatusCode(), $e);
         }
     }
 }

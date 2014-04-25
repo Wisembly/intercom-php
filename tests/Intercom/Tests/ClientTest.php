@@ -70,19 +70,36 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
     /**
      * @expectedException Intercom\Exception\HttpClientException
-     * @expectedMessageException Http client call failed.
+     * @expectedMessageException Not Found
      */
     public function testSendWithException()
     {
         $request = $this->getMock('GuzzleHttp\Message\RequestInterface');
-        $exception = $this->getMock('GuzzleHttp\Exception\TransferException');
 
         $parameters = [
             'event_name' => 'has_been_invited',
             'user_id'    => '2',
             'created'    => '1398246721',
         ];
-            
+
+        $response = $this->getMock('GuzzleHttp\Message\ResponseInterface');
+        $response->expects(self::once())
+            ->method('getReasonPhrase')
+            ->will(self::returnValue('Not Found'));
+        $response->expects(self::once())
+            ->method('getStatusCode')
+            ->will(self::returnValue(404));
+
+        $exception = $this->getMockBuilder('GuzzleHttp\Exception\RequestException')
+                          ->disableOriginalConstructor()
+                          ->getMock();
+        $exception->expects(self::at(0))
+            ->method('getResponse')
+            ->will(self::returnValue($response));
+        $exception->expects(self::at(1))
+            ->method('getResponse')
+            ->will(self::returnValue($response));
+
         $object  = $this->getMockBuilder('Intercom\IntercomObjectInterface')
                         ->disableOriginalConstructor()
                         ->getMock();

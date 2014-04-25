@@ -10,8 +10,7 @@ use Intercom\Exception\HttpClientException;
 /**
  * Client for Intercom which use HTTPS API
  *
- * @see http://doc.intercom.io/api/v1/
- * @see http://doc.intercom.io/api/v3/ 
+ * @see http://doc.intercom.io/api
  */
 class Client
 {

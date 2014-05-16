@@ -11,8 +11,8 @@ use Intercom\IntercomObjectInterface,
  * This class represents an event used by Intercom to add/increment
  * an event associated to a user.
  *
- * @see Doc : http://docs.intercom.io/filtering-users-by-events/Tracking-User-Events-in-Intercom
- * @see Api : http://doc.intercom.io/api/v3/#events
+ * @link Doc : http://docs.intercom.io/filtering-users-by-events/Tracking-User-Events-in-Intercom
+ * @link Api : http://doc.intercom.io/api/v3/#events
  */
 class Event implements IntercomObjectInterface
 {

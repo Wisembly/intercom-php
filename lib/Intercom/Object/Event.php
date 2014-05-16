@@ -1,6 +1,6 @@
 <?php
 
-namespace Intercom\Event;
+namespace Intercom\Object;
 
 use \Datetime;
 

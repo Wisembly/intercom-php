@@ -1,11 +1,11 @@
 <?php
 
-namespace Intercom\Tests\Event;
+namespace Intercom\Tests\Object;
 
 use \Datetime,
     \PHPUnit_Framework_TestCase;
 
-use Intercom\Event\Event;
+use Intercom\Object\Event;
 
 class EventTest extends PHPUnit_Framework_TestCase
 {

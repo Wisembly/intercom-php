@@ -7,7 +7,7 @@ use \Exception;
 /**
  * The base of all Intercom lib exceptions
  */
-abstract class AbstractIntercomException extends Exception implements IntercomExceptionInterface
+abstract class AbstractIntercomException extends Exception
 {
     public function __construct($message = null, $code = null, Exception $previous = null)
     {

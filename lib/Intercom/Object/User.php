@@ -15,15 +15,13 @@ class User implements ObjectInterface
     private $userId;
     private $email;
     private $attributes;
-    private $httpMethod;
 
     /**
      * @param int    $userId     The user's id
      * @param string $email      The user's email
      * @param array  $attributes Optionals attributes
-     * @param string $httpMethod If you want create, edit, delete a User
      */
-    public function __construct($userId = null, $email = null, array $attributes = [], $httpMethod = 'PUT')
+    public function __construct($userId = null, $email = null, array $attributes = [])
     {
         if (null === $userId && null === $email) {
             throw new UserException('An userId or email must be specified and are mandatory to create a User');
@@ -32,7 +30,6 @@ class User implements ObjectInterface
         $this->userId     = $userId;
         $this->email      = $email;
         $this->attributes = $attributes;
-        $this->httpMethod = $httpMethod;
     }
 
     /**

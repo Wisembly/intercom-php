@@ -51,7 +51,7 @@ class Client
      */
     public function createUser(User $user)
     {
-        return $this->send(new Request('POST', '/user', [], $user->format()));
+        return $this->send(new Request('POST', self::INTERCOM_BASE_URL . '/v1/users', [], $user->format()));
     }
 
     /**
@@ -65,7 +65,7 @@ class Client
      */
     public function createEvent(Event $event)
     {
-        return $this->send(new Request('POST', '/events', [], $event->format()));
+        return $this->send(new Request('POST', self::INTERCOM_BASE_URL . '/events', [], $event->format()));
     }
 
     /**
@@ -82,7 +82,7 @@ class Client
         try {
             $clientRequest = $this->client->createRequest(
                 $request->getMethod(),
-                self::INTERCOM_BASE_URL . $request->getUrl(),
+                $request->getUrl(),
                 [
                     'headers' => ['Content-Type' => 'application\json'],
                     'body'    => $request->getBody(),

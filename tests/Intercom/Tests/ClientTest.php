@@ -27,7 +27,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $response      = $this->getMock('GuzzleHttp\Message\ResponseInterface');
         $clientRequest = $this->getMock('GuzzleHttp\Message\RequestInterface');
 
-        $request = new Request('POST', '/events', [], [
+        $request = new Request('POST', Client::INTERCOM_BASE_URL . '/events', [], [
             'event_name' => 'has_been_invited',
             'user_id'    => '2',
             'created'    => '1398246721',
@@ -64,7 +64,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
     {
         $clientRequest = $this->getMock('GuzzleHttp\Message\RequestInterface');
 
-        $request = new Request('POST', '/events', [], [
+        $request = new Request('POST', Client::INTERCOM_BASE_URL . '/events', [], [
             'event_name' => 'has_been_invited',
             'user_id'    => '2',
             'created'    => '1398246721',

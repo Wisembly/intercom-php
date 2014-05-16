@@ -7,5 +7,4 @@ namespace Intercom\Exception;
  */
 class UserException extends AbstractIntercomException
 {
-    
 }

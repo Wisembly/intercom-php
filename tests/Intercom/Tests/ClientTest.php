@@ -8,6 +8,7 @@ use \Datetime,
 use GuzzleHttp\Exception\ClientException;
 
 use Intercom\Client,
+    Intercom\Request\Request,
     Intercom\Event\Event;
 
 class ClientTest extends PHPUnit_Framework_TestCase
@@ -23,27 +24,14 @@ class ClientTest extends PHPUnit_Framework_TestCase
 
     public function testSend()
     {
-        $response = $this->getMock('GuzzleHttp\Message\ResponseInterface');
-        $request = $this->getMock('GuzzleHttp\Message\RequestInterface');
+        $response      = $this->getMock('GuzzleHttp\Message\ResponseInterface');
+        $clientRequest = $this->getMock('GuzzleHttp\Message\RequestInterface');
 
-        $parameters = [
+        $request = new Request('POST', '/events', [], [
             'event_name' => 'has_been_invited',
             'user_id'    => '2',
             'created'    => '1398246721',
-        ];
-
-        $object  = $this->getMockBuilder('Intercom\IntercomObjectInterface')
-                        ->disableOriginalConstructor()
-                        ->getMock();
-        $object->expects(self::once())
-            ->method('getHttpMethod')
-            ->will(self::returnValue('POST'));
-        $object->expects(self::once())
-            ->method('getUrl')
-            ->will(self::returnValue('/events'));
-        $object->expects(self::once())
-            ->method('getParameters')
-            ->will(self::returnValue($parameters));
+        ]);
 
         $client = $this->getMockBuilder('GuzzleHttp\ClientInterface')
                         ->disableOriginalConstructor()
@@ -55,17 +43,17 @@ class ClientTest extends PHPUnit_Framework_TestCase
                 Client::INTERCOM_BASE_URL . '/events',
                 [
                     'headers' => ['Content-Type' => 'application\json'],
-                    'body' => $parameters,
-                    'auth' => [$this->appId, $this->apiKey]
+                    'body'    => $request->getBody(),
+                    'auth'    => [$this->appId, $this->apiKey]
                 ]
             )
-            ->will(self::returnValue($request));
+            ->will(self::returnValue($clientRequest));
         $client->expects(self::once())
             ->method('send')
-            ->with($request)
+            ->with($clientRequest)
             ->will(self::returnValue($response));
 
-        (new Client($this->appId, $this->apiKey, $client))->send($object);
+        (new Client($this->appId, $this->apiKey, $client))->send($request);
     }
 
     /**
@@ -74,13 +62,13 @@ class ClientTest extends PHPUnit_Framework_TestCase
      */
     public function testSendWithException()
     {
-        $request = $this->getMock('GuzzleHttp\Message\RequestInterface');
+        $clientRequest = $this->getMock('GuzzleHttp\Message\RequestInterface');
 
-        $parameters = [
+        $request = new Request('POST', '/events', [], [
             'event_name' => 'has_been_invited',
             'user_id'    => '2',
             'created'    => '1398246721',
-        ];
+        ]);
 
         $response = $this->getMock('GuzzleHttp\Message\ResponseInterface');
         $response->expects(self::once())
@@ -100,19 +88,6 @@ class ClientTest extends PHPUnit_Framework_TestCase
             ->method('getResponse')
             ->will(self::returnValue($response));
 
-        $object  = $this->getMockBuilder('Intercom\IntercomObjectInterface')
-                        ->disableOriginalConstructor()
-                        ->getMock();
-        $object->expects(self::once())
-            ->method('getHttpMethod')
-            ->will(self::returnValue('POST'));
-        $object->expects(self::once())
-            ->method('getUrl')
-            ->will(self::returnValue('/events'));
-        $object->expects(self::once())
-            ->method('getParameters')
-            ->will(self::returnValue($parameters));
-
         $client = $this->getMockBuilder('GuzzleHttp\ClientInterface')
                         ->disableOriginalConstructor()
                         ->getMock();
@@ -123,16 +98,16 @@ class ClientTest extends PHPUnit_Framework_TestCase
                 Client::INTERCOM_BASE_URL . '/events',
                 [
                     'headers' => ['Content-Type' => 'application\json'],
-                    'body' => $parameters,
-                    'auth' => [$this->appId, $this->apiKey],
+                    'body'    => $request->getBody(),
+                    'auth'    => [$this->appId, $this->apiKey],
                 ]
             )
-            ->will(self::returnValue($request));
+            ->will(self::returnValue($clientRequest));
         $client->expects(self::once())
             ->method('send')
-            ->with($request)
+            ->with($clientRequest)
             ->will(self::throwException($exception));
 
-        (new Client($this->appId, $this->apiKey, $client))->send($object);
+        (new Client($this->appId, $this->apiKey, $client))->send($request);
     }
 }

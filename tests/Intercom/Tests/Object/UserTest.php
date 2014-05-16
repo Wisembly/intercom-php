@@ -27,7 +27,6 @@ class UserTest extends PHPUnit_Framework_TestCase
             'user_id' => 1,
             'email'   => 'foo@bar.fr',
             'token'   => 'fooBarBaz',
-        ], $user->getParameters());
-        $this->assertEquals('POST', $user->getHttpMethod());
+        ], $user->format());
     }
 }

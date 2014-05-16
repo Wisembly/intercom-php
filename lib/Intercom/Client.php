@@ -5,7 +5,13 @@ namespace Intercom;
 use GuzzleHttp\ClientInterface as Guzzle,
     GuzzleHttp\Exception\TransferException;
 
-use Intercom\Exception\HttpClientException;
+use Intercom\Exception\HttpClientException,
+    
+    Intercom\Object\User,
+    Intercom\Object\Event,
+
+    Intercom\Request\Request,
+    Intercom\Request\RequestInterface;
 
 /**
  * Client for Intercom which use HTTPS API
@@ -35,28 +41,56 @@ class Client
     }
 
     /**
+     * Create a User
+     * 
+     * @param  User   $user 
+     * 
+     * @throws HttpClientException
+     *
+     * @return GuzzleHttp\Message\Response
+     */
+    public function createUser(User $user)
+    {
+        return $this->send(new Request('POST', '/user', [], $user->format()));
+    }
+
+    /**
+     * Create an Event
+     * 
+     * @param  Event   $event 
+     * 
+     * @throws HttpClientException
+     *
+     * @return GuzzleHttp\Message\Response
+     */
+    public function createEvent(Event $event)
+    {
+        return $this->send(new Request('POST', '/events', [], $event->format()));
+    }
+
+    /**
      * Use the curl client to make an http call
      * 
-     * @param  IntercomObjectInterface $object An object related with intercom API
+     * @param  RequestInterface $request A request related with intercom API
      *
      * @return GuzzleHttp\Message\Response
      * 
      * @throws HttpClientException
      */
-    public function send(IntercomObjectInterface $object)
+    public function send(RequestInterface $request)
     {
         try {
-            $request = $this->client->createRequest(
-                $object->getHttpMethod(),
-                self::INTERCOM_BASE_URL . $object->getUrl(),
+            $clientRequest = $this->client->createRequest(
+                $request->getMethod(),
+                self::INTERCOM_BASE_URL . $request->getUrl(),
                 [
                     'headers' => ['Content-Type' => 'application\json'],
-                    'body'    => $object->getParameters(),
+                    'body'    => $request->getBody(),
                     'auth'    => [$this->appId, $this->apiKey]
                 ]
             );
 
-            return $this->client->send($request);   
+            return $this->client->send($clientRequest);   
         } catch (TransferException $e) {
             throw new HttpClientException($e->getResponse()->getReasonPhrase(), $e->getResponse()->getStatusCode(), $e);
         }

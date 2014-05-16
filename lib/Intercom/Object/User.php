@@ -2,7 +2,7 @@
 
 namespace Intercom\Object;
 
-use Intercom\IntercomObjectInterface,
+use Intercom\Object\ObjectInterface,
     Intercom\Exception\UserException;
 
 /**
@@ -10,7 +10,7 @@ use Intercom\IntercomObjectInterface,
  *
  * @link Api : http://doc.intercom.io/api/#users
  */
-class User implements IntercomObjectInterface
+class User implements ObjectInterface
 {
     private $userId;
     private $email;
@@ -38,7 +38,7 @@ class User implements IntercomObjectInterface
     /**
      * {@inheritdoc}
      */
-    public function getParameters()
+    public function format()
     {
         $attributes = [];
 
@@ -51,22 +51,6 @@ class User implements IntercomObjectInterface
         }
 
         return array_merge($attributes, $this->attributes);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getHttpMethod()
-    {
-        return $this->httpMethod;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getUrl()
-    {
-        return '/users';        
     }
 
     /**

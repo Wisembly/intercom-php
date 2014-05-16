@@ -4,7 +4,7 @@ namespace Intercom\Object;
 
 use \Datetime;
 
-use Intercom\IntercomObjectInterface,
+use Intercom\Object\ObjectInterface,
     Intercom\Client;
 
 /**
@@ -14,7 +14,7 @@ use Intercom\IntercomObjectInterface,
  * @link Doc : http://docs.intercom.io/filtering-users-by-events/Tracking-User-Events-in-Intercom
  * @link Api : http://doc.intercom.io/api/v3/#events
  */
-class Event implements IntercomObjectInterface
+class Event implements ObjectInterface
 {
     private $name;
     private $userId;
@@ -37,29 +37,13 @@ class Event implements IntercomObjectInterface
     /**
      * {@inheritdoc}
      */
-    public function getParameters()
+    public function format()
     {
         return [
             'event_name' => (string) $this->getName(),
             'user_id'    => (string) $this->getUserId(),
             'created'    => (string) $this->getCreated()->getTimestamp(),
         ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getHttpMethod()
-    {
-        return 'POST';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getUrl()
-    {
-        return '/events';
     }
 
     /**

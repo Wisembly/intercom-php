@@ -12,23 +12,17 @@ use Intercom\Object\ObjectInterface,
  */
 class User implements ObjectInterface
 {
-    private $userId;
-    private $email;
     private $attributes;
 
     /**
-     * @param int    $userId     The user's id
-     * @param string $email      The user's email
      * @param array  $attributes Optionals attributes
      */
-    public function __construct($userId = null, $email = null, array $attributes = [])
+    public function __construct(array $attributes = [])
     {
-        if (null === $userId && null === $email) {
-            throw new UserException('An userId or email must be specified and are mandatory to create a User');
+        if (!isset($attributes['user_id']) && !isset($attributes['email'])) {
+            throw new UserException('An user_id or email attribute must be specified and are mandatory to create a User');
         }
 
-        $this->userId     = $userId;
-        $this->email      = $email;
         $this->attributes = $attributes;
     }
 
@@ -37,17 +31,7 @@ class User implements ObjectInterface
      */
     public function format()
     {
-        $attributes = [];
-
-        if (null !== $this->userId) {
-            $attributes['user_id'] = $this->userId;
-        }
-
-        if (null !== $this->email) {
-            $attributes['email'] = $this->email;
-        }
-
-        return array_merge($attributes, $this->attributes);
+        return $this->attributes;
     }
 
     /**
@@ -57,7 +41,7 @@ class User implements ObjectInterface
      */
     public function getUserId()
     {
-        return $this->userId;
+        return isset($this->attributes['user_id']) ? $this->attributes['user_id'] : null;
     }
 
     /**
@@ -67,6 +51,6 @@ class User implements ObjectInterface
      */
     public function getEmail()
     {
-        return $this->email;
+        return isset($this->attributes['email']) ? $this->attributes['email'] : null;
     }
 }

@@ -44,6 +44,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
                 [
                     'headers' => ['Content-Type' => 'application\json'],
                     'body'    => $request->getBody(),
+                    'query'   => $request->getParameters(),
                     'auth'    => [$this->appId, $this->apiKey]
                 ]
             )
@@ -99,6 +100,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
                 [
                     'headers' => ['Content-Type' => 'application\json'],
                     'body'    => $request->getBody(),
+                    'query'   => $request->getParameters(),
                     'auth'    => [$this->appId, $this->apiKey],
                 ]
             )
@@ -109,5 +111,66 @@ class ClientTest extends PHPUnit_Framework_TestCase
             ->will(self::throwException($exception));
 
         (new Client($this->appId, $this->apiKey, $client))->send($request);
+    }
+
+    /**
+     * @expectedException Intercom\Exception\UserException
+     * @expectedMessage An userId or email must be specified and are mandatory to get a User
+     */
+    public function testGetUserWithoutMandatoryKey()
+    {
+        $client = $this->getMockBuilder('GuzzleHttp\ClientInterface')
+                        ->disableOriginalConstructor()
+                        ->getMock();
+
+        (new Client($this->appId, $this->apiKey, $client))->getUser();
+    }
+
+    public function testGetUser()
+    {
+        $clientRequest = $this->getMock('GuzzleHttp\Message\RequestInterface');
+
+        $request = new Request('GET', Client::INTERCOM_BASE_URL . '/v1/users', ['user_id' => 1, 'email' => 'foo@bar.fr']);
+
+        $response = $this->getMock('GuzzleHttp\Message\ResponseInterface');
+        $response->expects(self::once())
+            ->method('json')
+            ->will(self::returnValue([
+                'user_id' => 1,
+                'email'   => 'foo@bar.fr',
+                'token'   => 'fooBarBaz',
+            ]));
+
+        $client = $this->getMockBuilder('GuzzleHttp\ClientInterface')
+                        ->disableOriginalConstructor()
+                        ->getMock();
+        $client->expects(self::once())
+            ->method('createRequest')
+            ->with(
+                'GET',
+                Client::INTERCOM_BASE_URL . '/v1/users',
+                [
+                    'headers' => ['Content-Type' => 'application\json'],
+                    'body'    => $request->getBody(),
+                    'query'   => ['user_id' => 1, 'email' => 'foo@bar.fr'],
+                    'auth'    => [$this->appId, $this->apiKey]
+                ]
+            )
+            ->will(self::returnValue($clientRequest));
+        $client->expects(self::once())
+            ->method('send')
+            ->with($clientRequest)
+            ->will(self::returnValue($response));
+
+        $user = (new Client($this->appId, $this->apiKey, $client))->getUser(1, 'foo@bar.fr');
+
+        $this->assertInstanceOf('Intercom\Object\User', $user);
+        $this->assertEquals(1, $user->getUserId());
+        $this->assertEquals('foo@bar.fr', $user->getEmail());
+        $this->assertEquals([
+            'user_id' => 1,
+            'email'   => 'foo@bar.fr',
+            'token'   => 'fooBarBaz',
+        ], $user->format());
     }
 }

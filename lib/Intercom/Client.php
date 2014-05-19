@@ -6,6 +6,7 @@ use GuzzleHttp\ClientInterface as Guzzle,
     GuzzleHttp\Exception\TransferException;
 
 use Intercom\Exception\HttpClientException,
+    Intercom\Exception\UserException,
     
     Intercom\Object\User,
     Intercom\Object\Event,
@@ -67,7 +68,39 @@ class Client
     {
         return $this->send(new Request('PUT', self::INTERCOM_BASE_URL . '/v1/users', [], $user->format()));
     }
-    
+
+    /**
+     * Get a User
+     * 
+     * @param  string $userId The userId
+     * @param  string $email  The email
+     *
+     * @throws HttpClientException
+     * 
+     * @return User
+     */
+    public function getUser($userId = null, $email = null)
+    {
+        if (null === $userId && null === $email) {
+            throw new UserException('An userId or email must be specified and are mandatory to get a User');
+        }
+
+        $parameters = [];
+
+        if (null !== $userId) {
+            $parameters['user_id'] = $userId;
+        }
+
+        if (null !== $email) {
+            $parameters['email'] = $email;
+        }
+
+        $response   = $this->send(new Request('GET', self::INTERCOM_BASE_URL . '/v1/users', $parameters));
+        $attributes = $response->json();
+
+        return new User($attributes);
+    }
+
     /**
      * Create an Event
      * 
@@ -100,6 +133,7 @@ class Client
                 [
                     'headers' => ['Content-Type' => 'application\json'],
                     'body'    => $request->getBody(),
+                    'query'   => $request->getParameters(),
                     'auth'    => [$this->appId, $this->apiKey]
                 ]
             );

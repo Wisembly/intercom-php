@@ -55,6 +55,20 @@ class Client
     }
 
     /**
+     * Update a User
+     * 
+     * @param  User   $user
+     * 
+     * @throws HttpClientException
+     *
+     * @return GuzzleHttp\Message\Response
+     */
+    public function updateUser(User $user)
+    {
+        return $this->send(new Request('PUT', self::INTERCOM_BASE_URL . '/v1/users', [], $user->format()));
+    }
+    
+    /**
      * Create an Event
      * 
      * @param  Event   $event 

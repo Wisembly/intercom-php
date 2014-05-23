@@ -7,7 +7,7 @@ use GuzzleHttp\ClientInterface as Guzzle,
 
 use Intercom\Exception\HttpClientException,
     Intercom\Exception\UserException,
-    
+
     Intercom\Object\User,
     Intercom\Object\Event,
 
@@ -29,7 +29,7 @@ class Client
 
     /**
      * Initialize an Intercom connection
-     * 
+     *
      * @param string $appId  Intercom appId
      * @param string $apiKey Intercom apiKey
      * @param Guzzle $client Client of an extern library which handle curl calls
@@ -43,9 +43,9 @@ class Client
 
     /**
      * Create a User
-     * 
-     * @param  User   $user 
-     * 
+     *
+     * @param  User   $user
+     *
      * @throws HttpClientException
      *
      * @return GuzzleHttp\Message\Response
@@ -57,9 +57,9 @@ class Client
 
     /**
      * Update a User
-     * 
+     *
      * @param  User   $user
-     * 
+     *
      * @throws HttpClientException
      *
      * @return GuzzleHttp\Message\Response
@@ -71,12 +71,12 @@ class Client
 
     /**
      * Get a User
-     * 
+     *
      * @param  string $userId The userId
      * @param  string $email  The email
      *
      * @throws HttpClientException
-     * 
+     *
      * @return User
      */
     public function getUser($userId = null, $email = null)
@@ -102,10 +102,24 @@ class Client
     }
 
     /**
+     * Delete a User
+     *
+     * @param  User   $user
+     *
+     * @throws HttpClientException
+     *
+     * @return GuzzleHttp\Message\Response
+     */
+    public function deleteUser(User $user)
+    {
+        return $this->send(new Request('DELETE', self::INTERCOM_BASE_URL . '/v1/users', [], $user->format()));
+    }
+
+    /**
      * Create an Event
-     * 
-     * @param  Event   $event 
-     * 
+     *
+     * @param  Event   $event
+     *
      * @throws HttpClientException
      *
      * @return GuzzleHttp\Message\Response
@@ -117,11 +131,11 @@ class Client
 
     /**
      * Use the curl client to make an http call
-     * 
+     *
      * @param  RequestInterface $request A request related with intercom API
      *
      * @return GuzzleHttp\Message\Response
-     * 
+     *
      * @throws HttpClientException
      */
     public function send(RequestInterface $request)
@@ -138,7 +152,7 @@ class Client
                 ]
             );
 
-            return $this->client->send($clientRequest);   
+            return $this->client->send($clientRequest);
         } catch (TransferException $e) {
             throw new HttpClientException($e->getResponse()->getReasonPhrase(), $e->getResponse()->getStatusCode(), $e);
         }

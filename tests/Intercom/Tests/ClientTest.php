@@ -17,7 +17,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
     private $apiKey;
 
     public function setUp()
-    {   
+    {
         $this->appId  = 'myAppId';
         $this->apiKey = 'myApiKey';
     }

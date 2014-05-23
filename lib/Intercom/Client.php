@@ -12,7 +12,8 @@ use Intercom\Exception\HttpClientException,
     Intercom\Object\Event,
 
     Intercom\Request\Request,
-    Intercom\Request\RequestInterface;
+    Intercom\Request\RequestInterface,
+    Intercom\Request\Search\UserSearch;
 
 /**
  * Client for Intercom which use HTTPS API
@@ -103,7 +104,7 @@ class Client
 
     public function getUsers(UserSearch $search)
     {
-        $response = $this->send(new Request('GET', self::INTERCOM_BASE_URL . '/v1/users', $parameters));
+        $response = $this->send(new Request('GET', self::INTERCOM_BASE_URL . '/v1/users', $search->format()));
         $usersFromResponse = $response->json()['user'];
         $users = [];
 

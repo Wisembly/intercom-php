@@ -23,6 +23,18 @@ class UserSearch
         $this->setOrder($order);
     }
 
+    public function format()
+    {
+        return [
+            'page'     => $this->page,
+            'perPage'  => $this->perPage,
+            'tag_id'   => $this->tagId,
+            'tag_name' => $this->tagName,
+            'sort'     => $this->sort,
+            'order'    => $this->order,
+        ];
+    }
+
     public function setPage($page)
     {
         if (!filter_var($page, FILTER_VALIDATE_INT)) {

@@ -101,6 +101,19 @@ class Client
         return new User($attributes);
     }
 
+    public function getUsers(UserSearch $search)
+    {
+        $response = $this->send(new Request('GET', self::INTERCOM_BASE_URL . '/v1/users', $parameters));
+        $usersFromResponse = $response->json()['user'];
+        $users = [];
+
+        foreach ($usersFromResponse as $user) {
+            $users[] = new User($user);
+        }
+
+        return $users;
+    }
+
     /**
      * Delete a User
      *

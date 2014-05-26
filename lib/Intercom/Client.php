@@ -102,10 +102,20 @@ class Client
         return new User($attributes);
     }
 
+    /**
+     * Retrieve a collection of User
+     *
+     * @param  UserSearch $search The search
+     *
+     * @return User[]
+     *
+     * @todo The informations about pagination is lost for the moment.
+     */
     public function getUsers(UserSearch $search)
     {
         $response = $this->send(new Request('GET', self::INTERCOM_BASE_URL . '/v1/users', $search->format()));
-        $usersFromResponse = $response->json()['user'];
+
+        $usersFromResponse = $response->json()['users'];
         $users = [];
 
         foreach ($usersFromResponse as $user) {

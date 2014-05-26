@@ -1,12 +1,12 @@
 <?php
 
-namespace Intercom\Object;
+namespace Intercom\Request;
 
-interface ObjectInterface
+interface FormatableInterface
 {
     /**
      * Retrieve attributes formated for Intercom API parameters
-     * 
+     *
      * @return array
      */
     public function format();

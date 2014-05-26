@@ -4,7 +4,7 @@ namespace Intercom\Object;
 
 use \Datetime;
 
-use Intercom\Object\ObjectInterface,
+use Intercom\Request\FormatableInterface,
     Intercom\Client;
 
 /**
@@ -14,7 +14,7 @@ use Intercom\Object\ObjectInterface,
  * @link Doc : http://docs.intercom.io/filtering-users-by-events/Tracking-User-Events-in-Intercom
  * @link Api : http://doc.intercom.io/api/v3/#events
  */
-class Event implements ObjectInterface
+class Event implements FormatableInterface
 {
     private $name;
     private $userId;
@@ -22,7 +22,7 @@ class Event implements ObjectInterface
 
     /**
      * Create an event
-     * 
+     *
      * @param string   $name    The name of the event associated to a user
      * @param string   $userId  The Intercom/app user id
      * @param Datetime $created The created parameter will be converted to Unix timestamp
@@ -48,7 +48,7 @@ class Event implements ObjectInterface
 
     /**
      * Get name
-     * 
+     *
      * @return string
      */
     public function getName()
@@ -58,7 +58,7 @@ class Event implements ObjectInterface
 
     /**
      * Get user id
-     * 
+     *
      * @return string
      */
     public function getUserId()
@@ -68,7 +68,7 @@ class Event implements ObjectInterface
 
     /**
      * Get created
-     * 
+     *
      * @return Datetime
      */
     public function getCreated()

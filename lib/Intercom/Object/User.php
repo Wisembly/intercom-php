@@ -2,7 +2,7 @@
 
 namespace Intercom\Object;
 
-use Intercom\Object\ObjectInterface,
+use Intercom\Request\FormatableInterface,
     Intercom\Exception\UserException;
 
 /**
@@ -10,7 +10,7 @@ use Intercom\Object\ObjectInterface,
  *
  * @link Api : http://doc.intercom.io/api/#users
  */
-class User implements ObjectInterface
+class User implements FormatableInterface
 {
     private $attributes;
 
@@ -36,7 +36,7 @@ class User implements ObjectInterface
 
     /**
      * Get userId
-     * 
+     *
      * @return string
      */
     public function getUserId()
@@ -46,7 +46,7 @@ class User implements ObjectInterface
 
     /**
      * Get email
-     * 
+     *
      * @return string
      */
     public function getEmail()

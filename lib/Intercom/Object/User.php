@@ -229,9 +229,22 @@ class User implements FormatableInterface
      *
      * @return array
      */
-    public function getCustomData()
+    public function getCustomData($property = null)
     {
-        return $this->customData;
+        return null !== $property && isset($this->customData[$property]) ? $this->customData[$property] : $this->customData;
+    }
+
+    /**
+     * Add a property in customData
+     *
+     * @param string $property
+     * @param string $value
+     */
+    public function addCustomData($property, $value)
+    {
+        $this->customData[$property] = $value;
+
+        return $this;
     }
 
     /**

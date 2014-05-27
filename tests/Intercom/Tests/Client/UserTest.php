@@ -258,6 +258,11 @@ class UserTest extends PHPUnit_Framework_TestCase
 
         $clientRequest = $this->getMock('GuzzleHttp\Message\RequestInterface');
 
+        $response = $this->getMock('GuzzleHttp\Message\ResponseInterface');
+        $response->expects(self::once())
+            ->method('json')
+            ->will(self::returnValue($this->user));
+
         $client = $this->getMockBuilder('GuzzleHttp\ClientInterface')
                         ->disableOriginalConstructor()
                         ->getMock();
@@ -276,8 +281,85 @@ class UserTest extends PHPUnit_Framework_TestCase
             ->will(self::returnValue($clientRequest));
         $client->expects(self::once())
             ->method('send')
-            ->with($clientRequest);
+            ->with($clientRequest)
+            ->will(self::returnValue($response));
 
         (new UserClient($this->appId, $this->apiKey, $client))->create($user);
+    }
+
+    /**
+     * @covers ::update()
+     */
+    public function testUpdate()
+    {
+        $user = new User(1);
+
+        $clientRequest = $this->getMock('GuzzleHttp\Message\RequestInterface');
+
+        $response = $this->getMock('GuzzleHttp\Message\ResponseInterface');
+        $response->expects(self::once())
+            ->method('json')
+            ->will(self::returnValue($this->user));
+
+        $client = $this->getMockBuilder('GuzzleHttp\ClientInterface')
+                        ->disableOriginalConstructor()
+                        ->getMock();
+        $client->expects(self::once())
+            ->method('createRequest')
+            ->with(
+                'PUT',
+                UserClient::INTERCOM_BASE_URL,
+                [
+                    'headers' => ['Content-Type' => 'application\json'],
+                    'body'    => $user->format(),
+                    'query'   => [],
+                    'auth'    => [$this->appId, $this->apiKey]
+                ]
+            )
+            ->will(self::returnValue($clientRequest));
+        $client->expects(self::once())
+            ->method('send')
+            ->with($clientRequest)
+            ->will(self::returnValue($response));
+
+        (new UserClient($this->appId, $this->apiKey, $client))->update($user);
+    }
+
+    /**
+     * @covers ::delete()
+     */
+    public function testDelete()
+    {
+        $user = new User(1);
+
+        $clientRequest = $this->getMock('GuzzleHttp\Message\RequestInterface');
+
+        $response = $this->getMock('GuzzleHttp\Message\ResponseInterface');
+        $response->expects(self::once())
+            ->method('json')
+            ->will(self::returnValue($this->user));
+
+        $client = $this->getMockBuilder('GuzzleHttp\ClientInterface')
+                        ->disableOriginalConstructor()
+                        ->getMock();
+        $client->expects(self::once())
+            ->method('createRequest')
+            ->with(
+                'DELETE',
+                UserClient::INTERCOM_BASE_URL,
+                [
+                    'headers' => ['Content-Type' => 'application\json'],
+                    'body'    => $user->format(),
+                    'query'   => [],
+                    'auth'    => [$this->appId, $this->apiKey]
+                ]
+            )
+            ->will(self::returnValue($clientRequest));
+        $client->expects(self::once())
+            ->method('send')
+            ->with($clientRequest)
+            ->will(self::returnValue($response));
+
+        (new UserClient($this->appId, $this->apiKey, $client))->delete($user);
     }
 }

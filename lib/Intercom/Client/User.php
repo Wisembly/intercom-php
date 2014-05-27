@@ -2,8 +2,6 @@
 
 namespace Intercom\Client;
 
-use Symfony\Component\PropertyAccess\PropertyAccess;
-
 use GuzzleHttp\ClientInterface as Guzzle;
 
 use Intercom\AbstractClient,
@@ -16,18 +14,6 @@ class User extends AbstractClient
 {
     const INTERCOM_BASE_URL = 'https://api.intercom.io/v1/users';
 
-    private $accessor;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function __construct($appId, $apiKey, Guzzle $client)
-    {
-        $this->accessor = PropertyAccess::createPropertyAccessor();
-
-        parent::__construct($appId, $apiKey, $client);
-    }
-
     /**
      * Get a User
      *
@@ -35,6 +21,7 @@ class User extends AbstractClient
      * @param  string $email  The email
      *
      * @throws HttpClientException
+     * @throws UserException
      *
      * @return User
      */
@@ -55,8 +42,18 @@ class User extends AbstractClient
         }
 
         $response = $this->send(new Request('GET', self::INTERCOM_BASE_URL, $parameters));
+        $userData = $response->json();
 
-        return $this->hydrateUser($response->json());
+        /**
+         * Here we use the accessor to retrieve user_id and email, because if these keys doesn't exist the accessor
+         * will return 'null' and the construct of the User object will throw an Exception.
+         */
+        $user = new UserObject(
+            $this->accessor->getValue($userData, '[user_id]'),
+            $this->accessor->getValue($userData, '[email]')
+        );
+
+        return $this->hydrate($user, $userData);
     }
 
     /**
@@ -74,7 +71,12 @@ class User extends AbstractClient
         $users = [];
 
         foreach ($response->json()['users'] as $userData) {
-            $users[] = $this->hydrateUser($userData);
+            $user = new UserObject(
+                $this->accessor->getValue($userData, '[user_id]'),
+                $this->accessor->getValue($userData, '[email]')
+            );
+
+            $users[] = $this->hydrate($user, $userData);
         }
 
         return $users;
@@ -91,7 +93,9 @@ class User extends AbstractClient
      */
     public function create(UserObject $user)
     {
-        return $this->send(new Request('POST', self::INTERCOM_BASE_URL, [], $user->format()));
+        $response = $this->send(new Request('POST', self::INTERCOM_BASE_URL, [], $user->format()));
+
+        return $this->hydrate($user, $response->json());
     }
 
     /**
@@ -105,7 +109,9 @@ class User extends AbstractClient
      */
     public function update(UserObject $user)
     {
-        return $this->send(new Request('PUT', self::INTERCOM_BASE_URL, [], $user->format()));
+        $response = $this->send(new Request('PUT', self::INTERCOM_BASE_URL, [], $user->format()));
+
+        return $this->hydrate($user, $response->json());
     }
 
     /**
@@ -119,33 +125,8 @@ class User extends AbstractClient
      */
     public function delete(UserObject $user)
     {
-        return $this->send(new Request('DELETE', self::INTERCOM_BASE_URL, [], $user->format()));
-    }
+        $response = $this->send(new Request('DELETE', self::INTERCOM_BASE_URL, [], $user->format()));
 
-    /**
-     * Hydrate an user with given data
-     *
-     * @param  array  $data
-     *
-     * @throws UserException
-     *
-     * @return UserObject
-     */
-    private function hydrateUser(array $data)
-    {
-        /**
-         * Here we use the accessor to retrieve user_id and email, because if these keys doesn't exist the accessor
-         * will return 'null' and the construct of the User object will throw an Exception.
-         */
-        $user = new UserObject(
-            $this->accessor->getValue($data, '[user_id]'),
-            $this->accessor->getValue($data, '[email]')
-        );
-
-        foreach ($data as $property => $value) {
-            $this->accessor->setValue($user, $property, $value);
-        }
-
-        return $user;
+        return $this->hydrate($user, $response->json());
     }
 }

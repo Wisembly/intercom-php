@@ -2,6 +2,8 @@
 
 namespace Intercom;
 
+use Symfony\Component\PropertyAccess\PropertyAccess;
+
 use GuzzleHttp\ClientInterface as Guzzle,
     GuzzleHttp\Exception\TransferException;
 
@@ -19,6 +21,8 @@ abstract class AbstractClient
     private $apiKey;
     private $client;
 
+    protected $accessor;
+
     /**
      * Initialize an Intercom connection
      *
@@ -28,6 +32,8 @@ abstract class AbstractClient
      */
     public function __construct($appId, $apiKey, Guzzle $client)
     {
+        $this->accessor = PropertyAccess::createPropertyAccessor();
+
         $this->appId  = $appId;
         $this->apiKey = $apiKey;
         $this->client = $client;
@@ -60,5 +66,22 @@ abstract class AbstractClient
         } catch (TransferException $e) {
             throw new HttpClientException($e->getResponse()->getReasonPhrase(), $e->getResponse()->getStatusCode(), $e);
         }
+    }
+
+    /**
+     * Hydrate an object
+     *
+     * @param  object $object
+     * @param  array  $data
+     *
+     * @return object
+     */
+    protected function hydrate($object, array $data)
+    {
+        foreach ($data as $property => $value) {
+            $this->accessor->setValue($object, $property, $value);
+        }
+
+        return $object;
     }
 }

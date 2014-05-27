@@ -13,14 +13,6 @@ class Event extends AbstractClient
     const INTERCOM_BASE_URL = 'https://api.intercom.io/events';
 
     /**
-     * {@inheritdoc}
-     */
-    public function __construct($appId, $apiKey, Guzzle $client)
-    {
-        parent::__construct($appId, $apiKey, $client);
-    }
-
-    /**
      * Create an Event
      *
      * @param  EventObject   $event

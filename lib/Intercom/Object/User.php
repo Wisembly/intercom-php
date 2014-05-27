@@ -28,6 +28,9 @@ class User implements FormatableInterface
     private $sessionCount;
     private $socialProfiles;
     private $lastImpressionAt;
+    private $avatarUrl;
+    private $companyIds;
+    private $vipTimestamp;
 
     /**
      * @param integer $userId
@@ -413,5 +416,77 @@ class User implements FormatableInterface
     public function getLastImpressionAt()
     {
         return $this->lastImpressionAt;
+    }
+
+    /**
+     * Set AvatarUrl
+     *
+     * @param  string $avatarUrl
+     *
+     * @return $this
+     */
+    public function setAvatarUrl($avatarUrl)
+    {
+        $this->avatarUrl = $avatarUrl;
+
+        return $this;
+    }
+
+    /**
+     * Get AvatarUrl
+     *
+     * @return string
+     */
+    public function getAvatarUrl()
+    {
+        return $this->avatarUrl;
+    }
+
+    /**
+     * Set CompanyIds
+     *
+     * @param  array $companyIds
+     *
+     * @return $this
+     */
+    public function setCompanyIds(array $companyIds)
+    {
+        $this->companyIds = $companyIds;
+
+        return $this;
+    }
+
+    /**
+     * Get CompanyIds
+     *
+     * @return array
+     */
+    public function getCompanyIds()
+    {
+        return $this->companyIds;
+    }
+
+    /**
+     * Set VipTimestamp
+     *
+     * @param  string $vipTimestamp
+     *
+     * @return $this
+     */
+    public function setVipTimestamp($vipTimestamp)
+    {
+        $this->vipTimestamp = $vipTimestamp;
+
+        return $this;
+    }
+
+    /**
+     * Get VipTimestamp
+     *
+     * @return string
+     */
+    public function getVipTimestamp()
+    {
+        return $this->vipTimestamp;
     }
 }

@@ -2,7 +2,8 @@
 
 namespace Intercom;
 
-use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccess,
+    Symfony\Component\PropertyAccess\Exception\AccessException;
 
 use GuzzleHttp\ClientInterface as Guzzle,
     GuzzleHttp\Exception\TransferException;
@@ -79,7 +80,15 @@ abstract class AbstractClient
     protected function hydrate($object, array $data)
     {
         foreach ($data as $property => $value) {
-            $this->accessor->setValue($object, $property, $value);
+            try {
+                $this->accessor->setValue($object, $property, $value);
+            } catch (AccessException $e) {
+                /**
+                 * For the moment the properties for Intercom object like User or Event change sometimes.
+                 *
+                 * If you want use a unimplemented property, contribute on https://github.com/Wisembly/intercom-php
+                 */
+            }
         }
 
         return $object;

@@ -16,5 +16,8 @@ class UserTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('bar', $user->getCustomData('foo'));
         $this->assertEquals(['foo' => 'bar'], $user->getCustomData());
         $this->assertEquals(['foo' => 'bar'], $user->getCustomData('zzz'));
+
+        $this->assertTrue($user->hasCustomData('foo'));
+        $this->assertFalse($user->hasCustomData('zzz'));
     }
 }

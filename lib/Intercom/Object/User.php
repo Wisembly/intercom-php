@@ -251,6 +251,18 @@ class User implements FormatableInterface
     }
 
     /**
+     * Has a gievn property in customData
+     *
+     * @param  string  $property
+     *
+     * @return boolean
+     */
+    public function hasCustomData($property)
+    {
+        return isset($this->customData[$property]);
+    }
+
+    /**
      * Set LastSeenUserAgent
      *
      * @param  string $lastSeenUserAgent

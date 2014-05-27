@@ -2,6 +2,8 @@
 
 namespace Intercom\Object;
 
+use \Datetime;
+
 use Intercom\Request\FormatableInterface,
     Intercom\Exception\UserException;
 
@@ -12,18 +14,34 @@ use Intercom\Request\FormatableInterface,
  */
 class User implements FormatableInterface
 {
-    private $attributes;
+    private $intercomId;
+    private $userId;
+    private $email;
+    private $name;
+    private $createdAt;
+    private $lastSeenIp;
+    private $customData;
+    private $lastSeenUserAgent;
+    private $lastRequestAt;
+    private $unsubscribedFromEmails;
+    private $locationData;
+    private $sessionCount;
+    private $socialProfiles;
+    private $lastImpressionAt;
 
     /**
-     * @param array  $attributes Optionals attributes
+     * @param integer $userId
+     * @param string  $email
      */
-    public function __construct(array $attributes = [])
+    public function __construct($userId = null, $email = null)
     {
-        if (!isset($attributes['user_id']) && !isset($attributes['email'])) {
-            throw new UserException('An user_id or email attribute must be specified and are mandatory to create a User');
+        if (null === $userId && null === $email) {
+            throw new UserException("user_id or email must be defined.");
         }
 
-        $this->attributes = $attributes;
+        $this->userId = $userId;
+        $this->email = $email;
+        $this->createdAt = time();
     }
 
     /**
@@ -31,26 +49,356 @@ class User implements FormatableInterface
      */
     public function format()
     {
-        return $this->attributes;
+        return [
+            'user_id'                  => $this->userId,
+            'email'                    => $this->email,
+            'name'                     => $this->name,
+            'created_at'               => $this->createdAt,
+            'last_seen_ip'             => $this->lastSeenIp,
+            'custom_data'              => $this->customData,
+            'last_seen_user_agent'     => $this->lastSeenUserAgent,
+            'last_request_at'          => $this->lastRequestAt,
+            'unsubscribed_from_emails' => $this->unsubscribedFromEmails,
+            'location_data'            => $this->locationData,
+            'session_count'            => $this->sessionCount,
+            'social_profiles'          => $this->socialProfiles,
+            'last_impression_at'       => $this->lastImpressionAt,
+        ];
     }
 
     /**
-     * Get userId
+     * Set IntercomId
+     *
+     * @param  string $intercomId
+     *
+     * @return $this
+     */
+    public function setIntercomId($intercomId)
+    {
+        $this->intercomId = $intercomId;
+
+        return $this;
+    }
+
+    /**
+     * Get IntercomId
      *
      * @return string
      */
-    public function getUserId()
+    public function getIntercomId()
     {
-        return isset($this->attributes['user_id']) ? $this->attributes['user_id'] : null;
+        return $this->intercomId;
     }
 
     /**
-     * Get email
+     * Set UserId
+     *
+     * @param  integer $userId
+     *
+     * @return $this
+     */
+    public function setUserId($userId)
+    {
+        $this->userId = $userId;
+
+        return $this;
+    }
+
+    /**
+     * Get UserId
+     *
+     * @return integer
+     */
+    public function getUserId()
+    {
+        return $this->userId;
+    }
+
+    /**
+     * Set Email
+     *
+     * @param  string $email
+     *
+     * @return $this
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * Get Email
      *
      * @return string
      */
     public function getEmail()
     {
-        return isset($this->attributes['email']) ? $this->attributes['email'] : null;
+        return $this->email;
+    }
+
+    /**
+     * Set Name
+     *
+     * @param  string $name
+     *
+     * @return $this
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get Name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Set CreatedAt
+     *
+     * @param  string $createdAt
+     *
+     * @return $this
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * Get CreatedAt
+     *
+     * @return string
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * Set LastSeenIp
+     *
+     * @param  string $lastSeenIp
+     *
+     * @return $this
+     */
+    public function setLastSeenIp($lastSeenIp)
+    {
+        $this->lastSeenIp = $lastSeenIp;
+
+        return $this;
+    }
+
+    /**
+     * Get LastSeenIp
+     *
+     * @return string
+     */
+    public function getLastSeenIp()
+    {
+        return $this->lastSeenIp;
+    }
+
+    /**
+     * Set CustomData
+     *
+     * @param  array $customData
+     *
+     * @return $this
+     */
+    public function setCustomData(array $customData)
+    {
+        $this->customData = $customData;
+
+        return $this;
+    }
+
+    /**
+     * Get CustomData
+     *
+     * @return array
+     */
+    public function getCustomData()
+    {
+        return $this->customData;
+    }
+
+    /**
+     * Set LastSeenUserAgent
+     *
+     * @param  string $lastSeenUserAgent
+     *
+     * @return $this
+     */
+    public function setLastSeenUserAgent($lastSeenUserAgent)
+    {
+        $this->lastSeenUserAgent = $lastSeenUserAgent;
+
+        return $this;
+    }
+
+    /**
+     * Get LastSeenUserAgent
+     *
+     * @return string
+     */
+    public function getLastSeenUserAgent()
+    {
+        return $this->lastSeenUserAgent;
+    }
+
+    /**
+     * Set LastRequestAt
+     *
+     * @param  string $lastRequestAt
+     *
+     * @return $this
+     */
+    public function setLastRequestAt($lastRequestAt)
+    {
+        $this->lastRequestAt = $lastRequestAt;
+
+        return $this;
+    }
+
+    /**
+     * Get LastRequestAt
+     *
+     * @return string
+     */
+    public function getLastRequestAt()
+    {
+        return $this->lastRequestAt;
+    }
+
+    /**
+     * Set UnsubscribedFromEmails
+     *
+     * @param  boolean $unsubscribedFromEmails
+     *
+     * @return $this
+     */
+    public function setUnsubscribedFromEmails($unsubscribedFromEmails)
+    {
+        $this->unsubscribedFromEmails = $unsubscribedFromEmails;
+
+        return $this;
+    }
+
+    /**
+     * Get UnsubscribedFromEmails
+     *
+     * @return boolean
+     */
+    public function getUnsubscribedFromEmails()
+    {
+        return $this->unsubscribedFromEmails;
+    }
+
+    /**
+     * Set LocationData
+     *
+     * @param  array $locationData
+     *
+     * @return $this
+     */
+    public function setLocationData(array $locationData)
+    {
+        $this->locationData = $locationData;
+
+        return $this;
+    }
+
+    /**
+     * Get LocationData
+     *
+     * @return array
+     */
+    public function getLocationData()
+    {
+        return $this->locationData;
+    }
+
+    /**
+     * Set SessionCount
+     *
+     * @param  integer $sessionCount
+     *
+     * @return $this
+     */
+    public function setSessionCount($sessionCount)
+    {
+        $this->sessionCount = $sessionCount;
+
+        return $this;
+    }
+
+    /**
+     * Get SessionCount
+     *
+     * @return integer
+     */
+    public function getSessionCount()
+    {
+        return $this->sessionCount;
+    }
+
+    /**
+     * Set SocialProfiles
+     *
+     * @param  array $socialProfiles
+     *
+     * @return $this
+     */
+    public function setSocialProfiles(array $socialProfiles)
+    {
+        $this->socialProfiles = $socialProfiles;
+
+        return $this;
+    }
+
+    /**
+     * Get SocialProfiles
+     *
+     * @return array
+     */
+    public function getSocialProfiles()
+    {
+        return $this->socialProfiles;
+    }
+
+    /**
+     * Set LastImpressionAt
+     *
+     * @param  string $lastImpressionAt
+     *
+     * @return $this
+     */
+    public function setLastImpressionAt($lastImpressionAt)
+    {
+        $this->lastImpressionAt = $lastImpressionAt;
+
+        return $this;
+    }
+
+    /**
+     * Get LastImpressionAt
+     *
+     * @return string
+     */
+    public function getLastImpressionAt()
+    {
+        return $this->lastImpressionAt;
     }
 }

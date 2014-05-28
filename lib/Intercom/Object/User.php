@@ -337,11 +337,11 @@ class User implements FormatableInterface
     /**
      * Set LocationData
      *
-     * @param  array $locationData
+     * @param  mixed $locationData
      *
      * @return $this
      */
-    public function setLocationData(array $locationData)
+    public function setLocationData($locationData)
     {
         $this->locationData = $locationData;
 
@@ -351,7 +351,7 @@ class User implements FormatableInterface
     /**
      * Get LocationData
      *
-     * @return array
+     * @return mixed
      */
     public function getLocationData()
     {
@@ -385,11 +385,11 @@ class User implements FormatableInterface
     /**
      * Set SocialProfiles
      *
-     * @param  array $socialProfiles
+     * @param  mixed $socialProfiles
      *
      * @return $this
      */
-    public function setSocialProfiles(array $socialProfiles)
+    public function setSocialProfiles($socialProfiles)
     {
         $this->socialProfiles = $socialProfiles;
 
@@ -399,7 +399,7 @@ class User implements FormatableInterface
     /**
      * Get SocialProfiles
      *
-     * @return array
+     * @return mixed
      */
     public function getSocialProfiles()
     {
@@ -457,11 +457,11 @@ class User implements FormatableInterface
     /**
      * Set CompanyIds
      *
-     * @param  array $companyIds
+     * @param  mixed $companyIds
      *
      * @return $this
      */
-    public function setCompanyIds(array $companyIds)
+    public function setCompanyIds($companyIds)
     {
         $this->companyIds = $companyIds;
 
@@ -471,7 +471,7 @@ class User implements FormatableInterface
     /**
      * Get CompanyIds
      *
-     * @return array
+     * @return mixed
      */
     public function getCompanyIds()
     {

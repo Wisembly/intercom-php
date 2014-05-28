@@ -8,6 +8,7 @@ use Intercom\AbstractClient,
     Intercom\Exception\UserException,
     Intercom\Object\User as UserObject,
     Intercom\Request\Search\UserSearch,
+    Intercom\Request\PaginatedResponse,
     Intercom\Request\Request;
 
 class User extends AbstractClient
@@ -61,16 +62,16 @@ class User extends AbstractClient
      *
      * @param  UserSearch $search The search
      *
-     * @return User[]
+     * @return PaginatedResponse
      *
      * @todo The informations about pagination is lost for the moment.
      */
     public function search(UserSearch $search)
     {
-        $response = $this->send(new Request('GET', self::INTERCOM_BASE_URL, $search->format()));
+        $response = $this->send(new Request('GET', self::INTERCOM_BASE_URL, $search->format()))->json();
         $users = [];
 
-        foreach ($response->json()['users'] as $userData) {
+        foreach ($response['users'] as $userData) {
             $user = new UserObject(
                 $this->accessor->getValue($userData, '[user_id]'),
                 $this->accessor->getValue($userData, '[email]')
@@ -79,7 +80,7 @@ class User extends AbstractClient
             $users[] = $this->hydrate($user, $userData);
         }
 
-        return $users;
+        return new PaginatedResponse($users, $response['page'], $response['nextPage'], $response['totalPages'], $response['totalCount']);
     }
 
     /**

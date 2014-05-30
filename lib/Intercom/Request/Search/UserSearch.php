@@ -56,14 +56,10 @@ class UserSearch implements FormatableInterface
     /**
      * Set Page
      *
-     * @param integer $page
+     * @param mixed $page
      */
     public function setPage($page)
     {
-        if (!filter_var($page, FILTER_VALIDATE_INT)) {
-            throw new InvalidArgumentException('page must be an interger');
-        }
-
         $this->page = $page;
 
         return $this;
@@ -72,7 +68,7 @@ class UserSearch implements FormatableInterface
     /**
      * Get Page
      *
-     * @return integer
+     * @return mixed
      */
     public function getPage()
     {
@@ -82,14 +78,10 @@ class UserSearch implements FormatableInterface
     /**
      * Set Page
      *
-     * @param integer $perPage
+     * @param mixed $perPage
      */
     public function setPerPage($perPage)
     {
-        if (!filter_var($perPage, FILTER_VALIDATE_INT)) {
-            throw new InvalidArgumentException('perPage must be an interger');
-        }
-
         $this->perPage = $perPage;
 
         return $this;
@@ -98,7 +90,7 @@ class UserSearch implements FormatableInterface
     /**
      * Get per page
      *
-     * @return integer
+     * @return mixed
      */
     public function getPerPage()
     {
@@ -108,14 +100,10 @@ class UserSearch implements FormatableInterface
     /**
      * Set tag id
      *
-     * @param integer $tagId
+     * @param mixed $tagId
      */
     public function setTagId($tagId = null)
     {
-        if (null !== $tagId && !filter_var($tagId, FILTER_VALIDATE_INT)) {
-            throw new InvalidArgumentException('tagId must be an interger');
-        }
-
         $this->tagId = $tagId;
 
         return $this;
@@ -124,7 +112,7 @@ class UserSearch implements FormatableInterface
     /**
      * Get tag id
      *
-     * @return integer
+     * @return mixed
      */
     public function getTagId()
     {

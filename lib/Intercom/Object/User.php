@@ -78,7 +78,7 @@ class User implements FormatableInterface
      */
     public function setIntercomId($intercomId)
     {
-        $this->intercomId = $intercomId;
+        $this->intercomId = (int) $intercomId;
 
         return $this;
     }
@@ -102,7 +102,7 @@ class User implements FormatableInterface
      */
     public function setUserId($userId)
     {
-        $this->userId = $userId;
+        $this->userId = (int) $userId;
 
         return $this;
     }

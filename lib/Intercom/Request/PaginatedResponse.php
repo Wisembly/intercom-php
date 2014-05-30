@@ -78,4 +78,14 @@ class PaginatedResponse
     {
         return $this->totalCount;
     }
+
+    /**
+     * Is there another page to be fetch ?
+     *
+     * @return boolean
+     */
+    public function hasPageToBeFetch()
+    {
+        return null !== $this->nextPage;
+    }
 }

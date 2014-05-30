@@ -80,7 +80,7 @@ class User extends AbstractClient
             $users[] = $this->hydrate($user, $userData);
         }
 
-        return new PaginatedResponse($users, $response['page'], $response['nextPage'], $response['totalPages'], $response['totalCount']);
+        return new PaginatedResponse($users, $response['page'], $response['next_page'], $response['total_pages'], $response['total_count']);
     }
 
     /**

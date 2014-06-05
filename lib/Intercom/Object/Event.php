@@ -19,19 +19,22 @@ class Event implements FormatableInterface
     private $name;
     private $userId;
     private $created;
+    private $metadata;
 
     /**
      * Create an event
      *
-     * @param string   $name    The name of the event associated to a user
-     * @param string   $userId  The Intercom/app user id
-     * @param Datetime $created The created parameter will be converted to Unix timestamp
+     * @param string        $name     The name of the event associated to a user
+     * @param string        $userId   The Intercom/app user id
+     * @param Datetime      $created  The created parameter will be converted to Unix timestamp
+     * @param EventMetadata $metadata Optional metadata about the event
      */
-    public function __construct($name, $userId, Datetime $created = null)
+    public function __construct($name, $userId, Datetime $created = null, EventMetadata $metadata = null)
     {
-        $this->name       = $name;
-        $this->userId     = $userId;
-        $this->created    = null !== $created ? $created : new Datetime;
+        $this->name      = $name;
+        $this->userId    = $userId;
+        $this->created   = null !== $created ? $created : new Datetime;
+        $this->metadata  = $metadata;
     }
 
     /**
@@ -43,6 +46,7 @@ class Event implements FormatableInterface
             'event_name' => (string) $this->getName(),
             'user_id'    => (string) $this->getUserId(),
             'created'    => (string) $this->getCreated()->getTimestamp(),
+            'metadata'   => null === $this->getMetadata() ? null : $this->getMetadata()->getMetadata(),
         ];
     }
 
@@ -74,5 +78,15 @@ class Event implements FormatableInterface
     public function getCreated()
     {
         return $this->created;
+    }
+
+    /**
+     * Get metadata
+     * 
+     * @return EventMetadata
+     */
+    public function getMetadata()
+    {
+        return $this->metadata;
     }
 }

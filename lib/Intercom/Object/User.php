@@ -43,8 +43,9 @@ class User implements FormatableInterface
         }
 
         $this->userId = $userId;
-        $this->email = $email;
+        $this->email = mb_strtolower($email, mb_detect_encoding($email));
         $this->createdAt = time();
+        $this->customData = [];
     }
 
     /**

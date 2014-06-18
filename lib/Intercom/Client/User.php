@@ -6,6 +6,7 @@ use GuzzleHttp\ClientInterface as Guzzle;
 
 use Intercom\AbstractClient,
     Intercom\Exception\UserException,
+    Intercom\Exception\ConversationException,
     Intercom\Object\User as UserObject,
     Intercom\Request\Search\UserSearch,
     Intercom\Request\Request;
@@ -173,7 +174,7 @@ class User extends AbstractClient
      *
      * @throws HttpClientException
      * @throws UserException
-     * @throws Exception
+     * @throws ConversationException
      *
      * @return Array
      */
@@ -184,7 +185,7 @@ class User extends AbstractClient
         }
 
         if (null === $threadId) {
-            throw new Exception('An thread ID must be specified and are mandatory to get a conversation');
+            throw new ConversationException('An thread ID must be specified and are mandatory to get a conversation');
         }
 
         $parameters = [];

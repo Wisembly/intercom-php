@@ -163,4 +163,48 @@ class User extends AbstractClient
 
         return $threadsData;
     }
+
+    /**
+     * Get a User conversation
+     *
+     * @param  string $userId The userId
+     * @param  string $email  The email
+     * @param  string $threadId  The thread ID
+     *
+     * @throws HttpClientException
+     * @throws UserException
+     * @throws Exception
+     *
+     * @return Array
+     */
+    public function conversation($userId = null, $email = null, $threadId = null)
+    {
+        if (null === $userId && null === $email) {
+            throw new UserException('An userId or email must be specified and are mandatory to get a User');
+        }
+
+        if (null === $threadId) {
+            throw new Exception('An thread ID must be specified and are mandatory to get a conversation');
+        }
+
+        $parameters = [];
+
+        if (null !== $userId) {
+            $parameters['user_id'] = $userId;
+        }
+
+        if (null !== $email) {
+            $parameters['email'] = $email;
+        }
+
+        if (null !== $threadId) {
+            $parameters['thread_id'] = $threadId;
+        }
+
+        $response = $this->send(new Request('GET', self::INTERCOM_BASE_URL . '/message_threads', $parameters));
+        $threadData = $response->json();
+
+        return $threadData;
+    }
+
 }

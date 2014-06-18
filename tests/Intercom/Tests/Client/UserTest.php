@@ -212,13 +212,21 @@ class UserTest extends PHPUnit_Framework_TestCase
 
         $clientRequest = $this->getMock('GuzzleHttp\Message\RequestInterface');
 
+        $apiResponseData = [
+            'users'       => [
+                $this->user,
+                $this->user,
+            ],
+            'page'        => 1,
+            'next_page'   => 2,
+            'total_pages' => 10,
+            'total_count' => 100,
+        ];
+
         $response = $this->getMock('GuzzleHttp\Message\ResponseInterface');
         $response->expects(self::once())
             ->method('json')
-            ->will(self::returnValue(['users' => [
-                $this->user,
-                $this->user,
-            ]]));
+            ->will(self::returnValue($apiResponseData));
 
         $client = $this->getMockBuilder('GuzzleHttp\ClientInterface')
                         ->disableOriginalConstructor()
@@ -241,12 +249,17 @@ class UserTest extends PHPUnit_Framework_TestCase
             ->with($clientRequest)
             ->will(self::returnValue($response));
 
-        $users = (new UserClient($this->appId, $this->apiKey, $client))->search($search);
+        $paginatedResponse = (new UserClient($this->appId, $this->apiKey, $client))->search($search);
 
-        $this->assertInstanceOf('Intercom\Object\User', $users[0]);
-        $this->assertEquals('7902', $users[0]->getUserId());
-        $this->assertInstanceOf('Intercom\Object\User', $users[1]);
-        $this->assertEquals('7902', $users[1]->getUserId());
+        $this->assertInstanceOf('Intercom\Request\PaginatedResponse', $paginatedResponse);
+        $this->assertInstanceOf('Intercom\Object\User', $paginatedResponse->getContent()[0]);
+        $this->assertEquals('7902', $paginatedResponse->getContent()[0]->getUserId());
+        $this->assertInstanceOf('Intercom\Object\User', $paginatedResponse->getContent()[1]);
+        $this->assertEquals('7902', $paginatedResponse->getContent()[1]->getUserId());
+        $this->assertEquals(1, $paginatedResponse->getPage());
+        $this->assertEquals(2, $paginatedResponse->getNextPage());
+        $this->assertEquals(10, $paginatedResponse->getTotalPages());
+        $this->assertEquals(100, $paginatedResponse->getTotalCount());
     }
 
     /**

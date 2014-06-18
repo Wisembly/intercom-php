@@ -129,4 +129,38 @@ class User extends AbstractClient
 
         return $this->hydrate($user, $response->json());
     }
+    
+    
+    /**
+     * Get Users conversations
+     *
+     * @param  string $userId The userId
+     * @param  string $email  The email
+     *
+     * @throws HttpClientException
+     * @throws UserException
+     *
+     * @return Array
+     */
+    public function conversations($userId = null, $email = null)
+    {
+        if (null === $userId && null === $email) {
+            throw new UserException('An userId or email must be specified and are mandatory to get a User');
+        }
+
+        $parameters = [];
+
+        if (null !== $userId) {
+            $parameters['user_id'] = $userId;
+        }
+
+        if (null !== $email) {
+            $parameters['email'] = $email;
+        }
+
+        $response = $this->send(new Request('GET', self::INTERCOM_BASE_URL . '/message_threads', $parameters));
+        $threadsData = $response->json();
+
+        return $threadsData;
+    }
 }

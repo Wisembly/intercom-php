@@ -8,17 +8,17 @@ use Intercom\Object\User;
 
 class UserTest extends PHPUnit_Framework_TestCase
 {
-    public function testAddCustomData()
+    public function testAddCustomAttributes()
     {
         $user = new User(1, 'FréDériC@bar.fr');
-        $user->addCustomData('foo', 'bar');
+        $user->addCustomAttributes('foo', 'bar');
 
-        $this->assertEquals('bar', $user->getCustomData('foo'));
-        $this->assertEquals(['foo' => 'bar'], $user->getCustomData());
-        $this->assertEquals(['foo' => 'bar'], $user->getCustomData('zzz'));
+        $this->assertEquals('bar', $user->getCustomAttributes('foo'));
+        $this->assertEquals(['foo' => 'bar'], $user->getCustomAttributes());
+        $this->assertEquals(['foo' => 'bar'], $user->getCustomAttributes('zzz'));
         $this->assertEquals('frédéric@bar.fr', $user->getEmail());
 
-        $this->assertTrue($user->hasCustomData('foo'));
-        $this->assertFalse($user->hasCustomData('zzz'));
+        $this->assertTrue($user->hasCustomAttributes('foo'));
+        $this->assertFalse($user->hasCustomAttributes('zzz'));
     }
 }

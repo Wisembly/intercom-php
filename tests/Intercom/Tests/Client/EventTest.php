@@ -37,10 +37,10 @@ class EventTest extends PHPUnit_Framework_TestCase
             ->method('createRequest')
             ->with(
                 'POST',
-                EventClient::INTERCOM_BASE_URL,
+                EventClient::INTERCOM_BASE_URL . '/events',
                 [
-                    'headers' => ['Content-Type' => 'application\json'],
-                    'body'    => $event->format(),
+                    'headers' => ['Content-Type' => 'application/json', 'Accept' => 'application/json'],
+                    'json'    => $event->format(),
                     'query'   => [],
                     'auth'    => [$this->appId, $this->apiKey]
                 ]

@@ -31,7 +31,7 @@ class UserSearch implements FormatableInterface
     public function __construct($page = 1, $perPage = 50, $order = 'asc', $tagId = null, $segmentId = null)
     {
         if (null !== $tagId && null !== $segmentId) {
-            throw new InvalidArgumentException("You can not combine tag and segment in the same request");
+            throw new InvalidArgumentException("You can not combine tag and segment in the same request.");
         }
 
         $this->setPage($page);

@@ -10,8 +10,6 @@ use Intercom\AbstractClient,
 
 class Event extends AbstractClient
 {
-    const INTERCOM_BASE_URL = 'https://api.intercom.io/events';
-
     /**
      * Create an Event
      *
@@ -23,6 +21,6 @@ class Event extends AbstractClient
      */
     public function create(EventObject $event)
     {
-        return $this->send(new Request('POST', self::INTERCOM_BASE_URL, [], $event->format()));
+        return $this->send(new Request('POST', self::INTERCOM_BASE_URL . '/events', [], $event->format()));
     }
 }

@@ -2,11 +2,12 @@
 
 namespace Intercom;
 
+use Exception;
+
 use Symfony\Component\PropertyAccess\PropertyAccess,
     Symfony\Component\PropertyAccess\Exception\AccessException;
 
-use GuzzleHttp\ClientInterface as Guzzle,
-    GuzzleHttp\Exception\TransferException;
+use GuzzleHttp\ClientInterface as Guzzle;
 
 use Intercom\Exception\HttpClientException,
     Intercom\Request\RequestInterface;
@@ -18,6 +19,8 @@ use Intercom\Exception\HttpClientException,
  */
 abstract class AbstractClient
 {
+    const INTERCOM_BASE_URL = 'https://api.intercom.io';
+
     private $appId;
     private $apiKey;
     private $client;
@@ -51,20 +54,27 @@ abstract class AbstractClient
      */
     public function send(RequestInterface $request)
     {
+        $options = [
+            'headers' => ['Content-Type' => 'application/json', 'Accept' => 'application/json'],
+            'query'   => $request->getParameters(),
+            'auth'    => [$this->appId, $this->apiKey]
+        ];
+
+        if ('GET' !== $request->getMethod()) {
+            $options = array_merge($options, ['json' => $request->getBody()]);
+        }
+
         try {
             $clientRequest = $this->client->createRequest(
                 $request->getMethod(),
                 $request->getUrl(),
-                [
-                    'headers' => ['Content-Type' => 'application\json'],
-                    'body'    => $request->getBody(),
-                    'query'   => $request->getParameters(),
-                    'auth'    => [$this->appId, $this->apiKey]
-                ]
+                $options
             );
 
             return $this->client->send($clientRequest);
-        } catch (TransferException $e) {
+
+        // Catch all Guzzle\Request exceptions
+        } catch (Exception $e) {
             throw new HttpClientException($e->getResponse()->getReasonPhrase(), $e->getResponse()->getStatusCode(), $e);
         }
     }

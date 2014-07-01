@@ -2,7 +2,8 @@
 
 namespace Intercom\Request\Search;
 
-use \InvalidArgumentException;
+use \InvalidArgumentException,
+    \LengthException;
 
 use Intercom\Request\FormatableInterface;
 
@@ -21,20 +22,22 @@ class UserSearch implements FormatableInterface
     private $order;
 
     /**
-     * @param integer  $page     the app id for the application’s inbox you wish to access
-     * @param integer  $perPage  Users per page, max value of 500
-     * @param interger $tagId    query for users that are tagged with a specific tag.
-     * @param string   $tagName  query for users that are tagged with a specific tag.
-     * @param string   $sort     sort the query for users based on a field. Accepted values - created_at.
-     * @param string   $order    sorts the results in ascending or descending order. Accepted values - asc, desc.
+     * @param integer  $page      the app id for the application’s inbox you wish to access
+     * @param integer  $perPage   Users per page, max value of 500
+     * @param string   $order     sorts the results in ascending or descending order. Accepted values - asc, desc.
+     * @param interger $tagId     The id of the tag to filter by
+     * @param integer  $segmentId The id of the segment to filter by
      */
-    public function __construct($page = 1, $perPage = 100, $tagId = null, $tagName = null, $sort = 'created_at', $order = 'asc')
+    public function __construct($page = 1, $perPage = 50, $order = 'asc', $tagId = null, $segmentId = null)
     {
+        if (null !== $tagId && null !== $segmentId) {
+            throw new InvalidArgumentException("You can not combine tag and segment in the same request");
+        }
+
         $this->setPage($page);
         $this->setPerPage($perPage);
         $this->setTagId($tagId);
-        $this->setTagName($tagName);
-        $this->setSort($sort);
+        $this->setSegmentId($segmentId);
         $this->setOrder($order);
     }
 
@@ -44,12 +47,11 @@ class UserSearch implements FormatableInterface
     public function format()
     {
         return [
-            'page'     => $this->page,
-            'per_page' => $this->perPage,
-            'tag_id'   => $this->tagId,
-            'tag_name' => $this->tagName,
-            'sort'     => $this->sort,
-            'order'    => $this->order,
+            'page'       => $this->page,
+            'per_page'   => $this->perPage,
+            'tag_id'     => $this->tagId,
+            'segment_id' => $this->segmentId,
+            'order'      => $this->order,
         ];
     }
 
@@ -82,6 +84,10 @@ class UserSearch implements FormatableInterface
      */
     public function setPerPage($perPage)
     {
+        if (50 < $perPage) {
+            throw new LengthException(sprintf("perPage must be minus than 50, %d given.", $perPage));
+        }
+
         $this->perPage = $perPage;
 
         return $this;
@@ -120,51 +126,27 @@ class UserSearch implements FormatableInterface
     }
 
     /**
-     * Set tag name
+     * Set SegmentId
      *
-     * @param string $tagName
+     * @param  integer $segmentId
+     *
+     * @return $this
      */
-    public function setTagName($tagName)
+    public function setSegmentId($segmentId)
     {
-        $this->tagName = $tagName;
+        $this->segmentId = $segmentId;
 
         return $this;
     }
 
     /**
-     * Get tag name
+     * Get SegmentId
      *
-     * @return string
+     * @return integer
      */
-    public function getTagName()
+    public function getSegmentId()
     {
-        return $this->tagName;
-    }
-
-    /**
-     * Set sort
-     *
-     * @param string $sort Only created_at for the moment
-     */
-    public function setSort($sort)
-    {
-        if (!in_array($sort, ['created_at'])) {
-            throw new InvalidArgumentException('sort must belong a correct field list. See the API doc.');
-        }
-
-        $this->sort = $sort;
-
-        return $this;
-    }
-
-    /**
-     * Get sort
-     *
-     * @return string
-     */
-    public function getSort()
-    {
-        return $this->sort;
+        return $this->segmentId;
     }
 
     /**

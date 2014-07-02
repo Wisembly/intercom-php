@@ -20,7 +20,7 @@ class User implements FormatableInterface
     private $name;
     private $createdAt;
     private $lastSeenIp;
-    private $customData;
+    private $customAttributes;
     private $lastSeenUserAgent;
     private $lastRequestAt;
     private $unsubscribedFromEmails;
@@ -45,7 +45,7 @@ class User implements FormatableInterface
         $this->userId = $userId;
         $this->email = mb_strtolower($email, mb_detect_encoding($email));
         $this->createdAt = time();
-        $this->customData = [];
+        $this->customAttributes = [];
     }
 
     /**
@@ -59,14 +59,17 @@ class User implements FormatableInterface
             'name'                     => $this->name,
             'created_at'               => $this->createdAt,
             'last_seen_ip'             => $this->lastSeenIp,
-            'custom_data'              => $this->customData,
+            'custom_attributes'        => $this->customAttributes,
             'last_seen_user_agent'     => $this->lastSeenUserAgent,
             'last_request_at'          => $this->lastRequestAt,
             'unsubscribed_from_emails' => $this->unsubscribedFromEmails,
-            'location_data'            => $this->locationData,
-            'session_count'            => $this->sessionCount,
-            'social_profiles'          => $this->socialProfiles,
-            'last_impression_at'       => $this->lastImpressionAt,
+
+            // @todo Disable the following field temporarily
+
+            // 'location_data'            => $this->locationData,
+            // 'session_count'            => $this->sessionCount,
+            // 'social_profiles'          => $this->socialProfiles,
+            // 'last_impression_at'       => $this->lastImpressionAt,
         ];
     }
 
@@ -215,52 +218,52 @@ class User implements FormatableInterface
     }
 
     /**
-     * Set CustomData
+     * Set CustomAttributes
      *
-     * @param  array $customData
+     * @param  array $customAttributes
      *
      * @return $this
      */
-    public function setCustomData(array $customData)
+    public function setCustomAttributes(array $customAttributes)
     {
-        $this->customData = $customData;
+        $this->customAttributes = $customAttributes;
 
         return $this;
     }
 
     /**
-     * Get CustomData
+     * Get CustomAttributes
      *
      * @return array
      */
-    public function getCustomData($property = null)
+    public function getCustomAttributes($property = null)
     {
-        return null !== $property && isset($this->customData[$property]) ? $this->customData[$property] : $this->customData;
+        return null !== $property && isset($this->customAttributes[$property]) ? $this->customAttributes[$property] : $this->customAttributes;
     }
 
     /**
-     * Add a property in customData
+     * Add a property in customAttributes
      *
      * @param string $property
      * @param string $value
      */
-    public function addCustomData($property, $value)
+    public function addCustomAttributes($property, $value)
     {
-        $this->customData[$property] = $value;
+        $this->customAttributes[$property] = $value;
 
         return $this;
     }
 
     /**
-     * Has a gievn property in customData
+     * Has a gievn property in customAttributes
      *
      * @param  string  $property
      *
      * @return boolean
      */
-    public function hasCustomData($property)
+    public function hasCustomAttributes($property)
     {
-        return isset($this->customData[$property]);
+        return isset($this->customAttributes[$property]);
     }
 
     /**

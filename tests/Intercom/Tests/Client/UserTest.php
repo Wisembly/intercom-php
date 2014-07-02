@@ -96,10 +96,9 @@ class UserTest extends PHPUnit_Framework_TestCase
             ->method('createRequest')
             ->with(
                 'GET',
-                UserClient::INTERCOM_BASE_URL,
+                UserClient::INTERCOM_BASE_URL. '/users',
                 [
-                    'headers' => ['Content-Type' => 'application\json'],
-                    'body'    => [],
+                    'headers' => ['Content-Type' => 'application/json', 'Accept' => 'application/json'],
                     'query'   => ['user_id' => 1],
                     'auth'    => [$this->appId, $this->apiKey]
                 ]
@@ -132,10 +131,9 @@ class UserTest extends PHPUnit_Framework_TestCase
             ->method('createRequest')
             ->with(
                 'GET',
-                UserClient::INTERCOM_BASE_URL,
+                UserClient::INTERCOM_BASE_URL . '/users',
                 [
-                    'headers' => ['Content-Type' => 'application\json'],
-                    'body'    => [],
+                    'headers' => ['Content-Type' => 'application/json', 'Accept' => 'application/json'],
                     'query'   => ['user_id' => 7902],
                     'auth'    => [$this->appId, $this->apiKey]
                 ]
@@ -186,10 +184,9 @@ class UserTest extends PHPUnit_Framework_TestCase
             ->method('createRequest')
             ->with(
                 'GET',
-                UserClient::INTERCOM_BASE_URL,
+                UserClient::INTERCOM_BASE_URL . '/users',
                 [
-                    'headers' => ['Content-Type' => 'application\json'],
-                    'body'    => [],
+                    'headers' => ['Content-Type' => 'application/json', 'Accept' => 'application/json'],
                     'query'   => ['user_id' => 2],
                     'auth'    => [$this->appId, $this->apiKey],
                 ]
@@ -213,13 +210,15 @@ class UserTest extends PHPUnit_Framework_TestCase
         $clientRequest = $this->getMock('GuzzleHttp\Message\RequestInterface');
 
         $apiResponseData = [
-            'users'       => [
+            'users' => [
                 $this->user,
                 $this->user,
             ],
-            'page'        => 1,
-            'next_page'   => 2,
-            'total_pages' => 10,
+            'pages' => [
+                'page'        => 1,
+                'next'        => 2,
+                'total_pages' => 10,
+            ],
             'total_count' => 100,
         ];
 
@@ -235,10 +234,9 @@ class UserTest extends PHPUnit_Framework_TestCase
             ->method('createRequest')
             ->with(
                 'GET',
-                UserClient::INTERCOM_BASE_URL,
+                UserClient::INTERCOM_BASE_URL . '/users',
                 [
-                    'headers' => ['Content-Type' => 'application\json'],
-                    'body'    => [],
+                    'headers' => ['Content-Type' => 'application/json', 'Accept' => 'application/json'],
                     'query'   => $search->format(),
                     'auth'    => [$this->appId, $this->apiKey]
                 ]
@@ -265,7 +263,7 @@ class UserTest extends PHPUnit_Framework_TestCase
     /**
      * @covers ::create()
      */
-    public function testCreate()
+    public function testCreateOrUpdate()
     {
         $user = new User(1);
 
@@ -283,10 +281,10 @@ class UserTest extends PHPUnit_Framework_TestCase
             ->method('createRequest')
             ->with(
                 'POST',
-                UserClient::INTERCOM_BASE_URL,
+                UserClient::INTERCOM_BASE_URL . '/users',
                 [
-                    'headers' => ['Content-Type' => 'application\json'],
-                    'body'    => $user->format(),
+                    'headers' => ['Content-Type' => 'application/json', 'Accept' => 'application/json'],
+                    'json'    => $user->format(),
                     'query'   => [],
                     'auth'    => [$this->appId, $this->apiKey]
                 ]
@@ -297,45 +295,7 @@ class UserTest extends PHPUnit_Framework_TestCase
             ->with($clientRequest)
             ->will(self::returnValue($response));
 
-        (new UserClient($this->appId, $this->apiKey, $client))->create($user);
-    }
-
-    /**
-     * @covers ::update()
-     */
-    public function testUpdate()
-    {
-        $user = new User(1);
-
-        $clientRequest = $this->getMock('GuzzleHttp\Message\RequestInterface');
-
-        $response = $this->getMock('GuzzleHttp\Message\ResponseInterface');
-        $response->expects(self::once())
-            ->method('json')
-            ->will(self::returnValue($this->user));
-
-        $client = $this->getMockBuilder('GuzzleHttp\ClientInterface')
-                        ->disableOriginalConstructor()
-                        ->getMock();
-        $client->expects(self::once())
-            ->method('createRequest')
-            ->with(
-                'PUT',
-                UserClient::INTERCOM_BASE_URL,
-                [
-                    'headers' => ['Content-Type' => 'application\json'],
-                    'body'    => $user->format(),
-                    'query'   => [],
-                    'auth'    => [$this->appId, $this->apiKey]
-                ]
-            )
-            ->will(self::returnValue($clientRequest));
-        $client->expects(self::once())
-            ->method('send')
-            ->with($clientRequest)
-            ->will(self::returnValue($response));
-
-        (new UserClient($this->appId, $this->apiKey, $client))->update($user);
+        (new UserClient($this->appId, $this->apiKey, $client))->createOrUpdate($user);
     }
 
     /**
@@ -359,10 +319,10 @@ class UserTest extends PHPUnit_Framework_TestCase
             ->method('createRequest')
             ->with(
                 'DELETE',
-                UserClient::INTERCOM_BASE_URL,
+                UserClient::INTERCOM_BASE_URL . '/users',
                 [
-                    'headers' => ['Content-Type' => 'application\json'],
-                    'body'    => $user->format(),
+                    'headers' => ['Content-Type' => 'application/json', 'Accept' => 'application/json'],
+                    'json'    => $user->format(),
                     'query'   => [],
                     'auth'    => [$this->appId, $this->apiKey]
                 ]

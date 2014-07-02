@@ -9,22 +9,22 @@ class PaginatedResponse
 {
     private $content;
     private $page;
-    private $nextPage;
+    private $nextUrl;
     private $totalPages;
     private $totalCount;
 
     /**
      * @param mixed   $content
      * @param integer $page
-     * @param integer $nextPage
+     * @param integer $nextUrl
      * @param integer $totalPages
      * @param integer $totalCount
      */
-    public function __construct($content, $page, $nextPage, $totalPages, $totalCount)
+    public function __construct($content, $page, $nextUrl, $totalPages, $totalCount)
     {
         $this->content = $content;
         $this->page = $page;
-        $this->nextPage = $nextPage;
+        $this->nextUrl = $nextUrl;
         $this->totalPages = $totalPages;
         $this->totalCount = $totalCount;
     }
@@ -50,13 +50,13 @@ class PaginatedResponse
     }
 
     /**
-     * Get nextPage
+     * Get nextUrl
      *
      * @return integer
      */
-    public function getNextPage()
+    public function getNextUrl()
     {
-        return $this->nextPage;
+        return $this->nextUrl;
     }
 
     /**
@@ -86,6 +86,16 @@ class PaginatedResponse
      */
     public function hasPageToBeFetch()
     {
-        return null !== $this->nextPage;
+        return $this->totalPages > $this->page;
+    }
+
+    /**
+     * Get the next page
+     *
+     * @return integer
+     */
+    public function getNextPage()
+    {
+        return $this->totalPages > $this->page ? $this->page + 1 : null;
     }
 }

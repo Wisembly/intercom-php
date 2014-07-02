@@ -2,10 +2,13 @@
 
 namespace Intercom\Client;
 
+use InvalidArgumentException;
+
 use GuzzleHttp\ClientInterface as Guzzle;
 
 use Intercom\AbstractClient,
     Intercom\Exception\UserException,
+    Intercom\Exception\BulkException,
     Intercom\Object\User as UserObject,
     Intercom\Request\Search\UserSearch,
     Intercom\Request\PaginatedResponse,
@@ -13,8 +16,6 @@ use Intercom\AbstractClient,
 
 class User extends AbstractClient
 {
-    const INTERCOM_BASE_URL = 'https://api.intercom.io/v1/users';
-
     /**
      * Get a User
      *
@@ -24,7 +25,7 @@ class User extends AbstractClient
      * @throws HttpClientException
      * @throws UserException
      *
-     * @return User
+     * @return UserObject
      */
     public function get($userId = null, $email = null)
     {
@@ -42,7 +43,7 @@ class User extends AbstractClient
             $parameters['email'] = $email;
         }
 
-        $response = $this->send(new Request('GET', self::INTERCOM_BASE_URL, $parameters));
+        $response = $this->send(new Request('GET', self::INTERCOM_BASE_URL . '/users', $parameters));
         $userData = $response->json();
 
         /**
@@ -68,7 +69,7 @@ class User extends AbstractClient
      */
     public function search(UserSearch $search)
     {
-        $response = $this->send(new Request('GET', self::INTERCOM_BASE_URL, $search->format()))->json();
+        $response = $this->send(new Request('GET', self::INTERCOM_BASE_URL . '/users', $search->format()))->json();
         $users = [];
 
         foreach ($response['users'] as $userData) {
@@ -80,39 +81,51 @@ class User extends AbstractClient
             $users[] = $this->hydrate($user, $userData);
         }
 
-        return new PaginatedResponse($users, $response['page'], $response['next_page'], $response['total_pages'], $response['total_count']);
+        return new PaginatedResponse($users, $response['pages']['page'], $response['pages']['next'], $response['pages']['total_pages'], $response['total_count']);
     }
 
     /**
      * Create a User
      *
-     * @param  UserObject   $user
+     * @param  mixed  $users
      *
      * @throws HttpClientException
      *
-     * @return GuzzleHttp\Message\Response
+     * @return UserObject
      */
-    public function create(UserObject $user)
+    public function createOrUpdate($users)
     {
-        $response = $this->send(new Request('POST', self::INTERCOM_BASE_URL, [], $user->format()));
+        if (is_array($users)) {
+            return $this->bulk($users);
+        }
 
-        return $this->hydrate($user, $response->json());
+        if (!$users instanceof UserObject) {
+            throw new InvalidArgumentException("UserObject required");
+        }
+
+        $response = $this->send(new Request('POST', self::INTERCOM_BASE_URL . '/users', [], $users->format()));
+
+        return $this->hydrate($users, $response->json());
     }
 
     /**
-     * Update a User
+     * Use bulk to create or update users
      *
-     * @param  UserObject   $user
-     *
-     * @throws HttpClientException
-     *
-     * @return GuzzleHttp\Message\Response
+     * @param   array   $users
      */
-    public function update(UserObject $user)
+    public function bulk(array $users)
     {
-        $response = $this->send(new Request('PUT', self::INTERCOM_BASE_URL, [], $user->format()));
+        $userFormated = [];
 
-        return $this->hydrate($user, $response->json());
+        array_map(function(UserObject $user) use (&$userFormated) {
+            $userFormated[] = $user->format();
+        }, $users);
+
+        $response = $this->send(new Request('POST', self::INTERCOM_BASE_URL . '/users/bulk', [], ['users' => $userFormated]));
+
+        if ('200' !== $response->getStatusCode()) {
+            throw new BulkException('There is an exception with a bulk');
+        }
     }
 
     /**
@@ -122,11 +135,11 @@ class User extends AbstractClient
      *
      * @throws HttpClientException
      *
-     * @return GuzzleHttp\Message\Response
+     * @return UserObject
      */
     public function delete(UserObject $user)
     {
-        $response = $this->send(new Request('DELETE', self::INTERCOM_BASE_URL, [], $user->format()));
+        $response = $this->send(new Request('DELETE', self::INTERCOM_BASE_URL . '/users', [], $user->format()));
 
         return $this->hydrate($user, $response->json());
     }

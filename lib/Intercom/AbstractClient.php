@@ -75,7 +75,13 @@ abstract class AbstractClient
 
         // Catch all Guzzle\Request exceptions
         } catch (Exception $e) {
-            throw new HttpClientException($e->getResponse()->getReasonPhrase(), $e->getResponse()->getStatusCode(), $e);
+            $response = $e->getResponse();
+
+            throw new HttpClientException(
+                $response ? $response->getReasonPhrase() : $e->getMessage(),
+                $response ? $response->getStatusCode() : $e->getCode(),
+                $e
+            );
         }
     }
 

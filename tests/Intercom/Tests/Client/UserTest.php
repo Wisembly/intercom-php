@@ -170,10 +170,7 @@ class UserTest extends PHPUnit_Framework_TestCase
         $exception = $this->getMockBuilder('GuzzleHttp\Exception\RequestException')
                           ->disableOriginalConstructor()
                           ->getMock();
-        $exception->expects(self::at(0))
-            ->method('getResponse')
-            ->will(self::returnValue($response));
-        $exception->expects(self::at(1))
+        $exception->expects(self::once())
             ->method('getResponse')
             ->will(self::returnValue($response));
 
